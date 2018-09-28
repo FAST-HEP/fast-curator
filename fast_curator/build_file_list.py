@@ -1,7 +1,10 @@
 from __future__ import print_function
+import itertools
+import operator
 import os
 from glob import glob
-from collections import OrderedDict
+from fast_curator import read
+from collections import OrderedDict, defaultdict
 import uproot
 import logging
 logger = logging.getLogger(__name__)
@@ -63,12 +66,54 @@ def prepare_file_list(files, dataset, eventtype, tree_name):
     return data
 
 
+def select_default(values):
+    groups = itertools.groupby(sorted(values))
+    groups = [(group, sum(1 for _ in items)) for group, items in groups]
+    groups = [group for group in groups if group[1] > 1]
+    if not groups:
+        return None
+    most_common, number_items = max(groups, key=operator.itemgetter(1))
+    is_unique = len(map(lambda x: x[1] == number_items, groups)) == 1
+    if not is_unique:
+        return None
+    return most_common
+
+
+def prepare_contents(datasets):
+    datasets = [vars(data) if isinstance(data, read.Dataset) else data for data in datasets]
+    # build the default properties
+    values = defaultdict(list)
+    for data in datasets:
+        for k, v in data.items():
+            values[k].append(v)
+
+    defaults = {}
+    for key, vals in values.items():
+        new_default = select_default(vals)
+        if new_default:
+            defaults[key] = new_default
+
+    cleaned_datasets = []
+    for data in datasets:
+        new_data = {}
+        for key, val in data.items():
+            if key in defaults and val == defaults[key]:
+                continue
+            new_data[key] = val
+        cleaned_datasets.append(new_data)
+
+    contents = dict(datasets=cleaned_datasets)
+    if defaults:
+        contents["defaults"] = defaults
+    return contents
+
+
 def write_yaml(dataset, out_file):
     import yaml
     if os.path.exists(out_file):
-        with open(out_file, 'r') as original:
-            contents = yaml.load(original)
-        contents["datasets"].append(dataset)
+        datasets = read.from_yaml(out_file)
+        datasets.append(dataset)
+        contents = prepare_contents(datasets)
     else:
         contents = {}
         contents["datasets"] = [dataset]
