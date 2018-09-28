@@ -8,25 +8,6 @@ from collections import OrderedDict, defaultdict
 import logging
 logger = logging.getLogger(__name__)
 
-import uproot
-# uproot.tree._filename_explode('*.root')
-# uproot.numentries('*.root', 'events')
-# map(lambda x: (x[0], x[1], x[2]), uproot.iterate('*.root', 'events', branches='?', reportentries=True))"
-
-try:
-    import ROOT
-except ImportError:
-    logger.error("We still need to use ROOT for this work, largely to handle globbing for xrootd paths.")
-    logger.error("However, ROOT cannot be imported.  Is it installed and configured correctly?")
-    raise
-
-def xrootd_query(path):
-    if not glob.has_magic(path):
-        return path
-
-    values = r_glob(path)
-    return values
-
 
 class UsingUproot():
     import uproot
