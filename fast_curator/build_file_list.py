@@ -1,5 +1,4 @@
 from __future__ import print_function
-from fast_curator.read import from_yaml
 import os
 from glob import glob
 from collections import OrderedDict
@@ -64,17 +63,25 @@ def prepare_file_list(files, dataset, eventtype, tree_name):
     return data
 
 
-def write_output(dataset, out_file):
+def write_yaml(dataset, out_file):
+    import yaml
     if os.path.exists(out_file):
-        contents = from_yaml(out_file)
+        with open(out_file, 'r') as original:
+            contents = yaml.load(original)
         contents["datasets"].append(dataset)
     else:
         contents = {}
         contents["datasets"] = [dataset]
 
-    import yaml
+    # https://stackoverflow.com/questions/25108581/python-yaml-dump-bad-indentation
+    class MyDumper(yaml.Dumper):
+        def increase_indent(self, flow=False, indentless=False):
+            return super(MyDumper, self).increase_indent(flow, False)
+
+    yaml_contents = yaml.dump(contents, Dumper=MyDumper, default_flow_style=False)
     with open(out_file, 'w') as out:
-        yaml.dump(contents, out)
+        out.write(yaml_contents)
+    print(yaml_contents)
 
     return contents
 
@@ -119,8 +126,7 @@ def main(args=None):
                                 eventtype=args.eventtype, tree_name=args.tree_name)
     add_meta(dataset, args.meta)
 
-    content = write_output(dataset, args.output)
-    print(content)
+    content = write_yaml(dataset, args.output)
 
 if __name__ == "__main__":
     main()

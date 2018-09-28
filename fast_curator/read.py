@@ -2,6 +2,12 @@ from __future__ import print_function
 import os
 import six
 import logging
+import sys
+
+if sys.version_info[0] >= 3.3:
+    from types import SimpleNamespace as Dataset
+else:
+    from argparse import Namespace as Dataset
 
 
 def from_yaml(path, defaults={}):
@@ -29,7 +35,7 @@ def get_datasets(datasets_dict, defaults={},
                  find_associates=_associate_by_ext_suffix):
     datasets = []
     defaults.update(datasets_dict.get("default", {}))
-    for dataset in set(datasets_dict["datasets"]):
+    for dataset in datasets_dict["datasets"]:
         if isinstance(dataset, six.string_types):
             dataset_kwargs = _from_string(dataset, defaults)
         elif isinstance(dataset, dict):
