@@ -10,31 +10,36 @@ else:
     from argparse import Namespace as Dataset
 
 
-def from_yaml(path, defaults={}):
+def associate_by_ext_suffix(datasets):
+    has_ext = []
+    has_no_ext = []
+    for dataset in datasets:
+        out_list = has_ext if "_ext" in dataset.name else has_no_ext
+        out_list.append(dataset)
+
+    for dataset in has_no_ext:
+        associates = [d for d in has_ext if d.name.startswith(dataset.name)]
+        associates.append(dataset)
+        names = [a.name for a in associates]
+        for index in range(len(associates)):
+            associates[index].associates = names[:index] 
+            associates[index].associates += names[index+1:] 
+
+
+def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
     import yaml
     with open(path, 'r') as f:
         datasets_dict = yaml.load(f)
     if not datasets_dict:
         raise RuntimeError("Empty config file in '%s'" % path)
-    return get_datasets(datasets_dict, defaults)
-
-
-def _associate_by_ext_suffix(datasets):
-    not_extensions = [dataset for dataset in datasets
-                      if not dataset.name.endswith("_ext")]
-
-    for not_extension in not_extensions:
-        associated_datasets = [dataset
-                               for dataset in datasets
-                               if not_extension.name in dataset.name]
-        for dataset in associated_datasets:
-            dataset.associates = associated_datasets
+    return get_datasets(datasets_dict, defaults,
+                        find_associates=associate_by_ext_suffix)
 
 
 def get_datasets(datasets_dict, defaults={}, 
-                 find_associates=_associate_by_ext_suffix):
+                 find_associates=associate_by_ext_suffix):
     datasets = []
-    defaults.update(datasets_dict.get("default", {}))
+    defaults.update(datasets_dict.get("defaults", {}))
     for dataset in datasets_dict["datasets"]:
         if isinstance(dataset, six.string_types):
             dataset_kwargs = _from_string(dataset, defaults)

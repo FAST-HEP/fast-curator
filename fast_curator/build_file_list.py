@@ -2,66 +2,90 @@ from __future__ import print_function
 import itertools
 import operator
 import os
-from glob import glob
+import glob
 from fast_curator import read
 from collections import OrderedDict, defaultdict
-import uproot
 import logging
 logger = logging.getLogger(__name__)
 
+import uproot
 # uproot.tree._filename_explode('*.root')
 # uproot.numentries('*.root', 'events')
 # map(lambda x: (x[0], x[1], x[2]), uproot.iterate('*.root', 'events', branches='?', reportentries=True))"
 
+try:
+    import ROOT
+except ImportError:
+    logger.error("We still need to use ROOT for this work, largely to handle globbing for xrootd paths.")
+    logger.error("However, ROOT cannot be imported.  Is it installed and configured correctly?")
+    raise
 
 def xrootd_query(path):
     if not glob.has_magic(path):
         return path
 
-    try:
-        import ROOT
-    except ImportError:
-        logger.error("To glob xrootd paths, we need ROOT installed (for rootpy), but it's not!!")
-        raise
-    from rootpy.utils.ext_glob import glob as r_glob
-    return r_glob(path)
+    values = r_glob(path)
+    return values
 
 
-def expand_file_list(files):
-    full_list = []
-    for name in files:
-        if name.startswith("root:"):
-            expanded = xrootd_query(name)
-        else:
-            if not name.startswith("/"):
-                name = os.path.realpath(name)
-            expanded = glob(name)
-        full_list += [str(exp) for exp in expanded]
-    valid_files = []
-    for f in full_list:
-        try: 
-            with uproot.open(f):
-                pass
-        except:
-            continue
-        valid_files.append(f)
-    return valid_files
+class UsingUproot():
+    import uproot
+
+    @staticmethod
+    def expand_file_list(files):
+        full_list = []
+        for name in files:
+            if name.startswith("root:") and glob.has_magic(name):
+                    logger.error("Uproot cannot presently handle xrootd-served files with wild-cards. Use the ROOT version of this command instead?")
+                    raise RuntimeError("Trying to wild-card remote files with uproot")
+            expanded = UsingUproot.uproot.tree._filename_explode(name)
+            full_list += [str(exp) for exp in expanded]
+        return full_list
+
+    @staticmethod
+    def total_entries(files, tree):
+        return usingUproot.proot.numentries(files, tree)
 
 
-def prepare_file_list(files, dataset, eventtype, tree_name):
+class UsingROOT():
+
+    @staticmethod
+    def expand_file_list(files):
+        from rootpy.utils.ext_glob import glob
+        full_list = []
+        for name in files:
+            expanded =  glob(name)
+            full_list += [str(exp) for exp in expanded]
+        return full_list
+
+    @staticmethod
+    def total_entries(files, tree):
+        from rootpy import ROOT
+        chain = ROOT.TChain(tree)
+        for _file in files:
+            chain.Add(_file)
+        return chain.GetEntries()
+
+
+def prepare_file_list(files, dataset, eventtype, tree_name, use_uproot=False):
     """
     Expands all globs in the file lists and creates a dataframe similar to those from a DAS query
     """
 
-    full_list = expand_file_list(files)
-    nentries = uproot.numentries(full_list, tree_name)
+    if use_uproot and any(map(lambda x: glob.has_magic(x) and x.startswith("root:"), files)):
+        logger.warning("Switching to ROOT, despite being told to use uproot since you want to wild-card search xrootd remote files")
+        use_uproot = False
+    process_files = UsingUproot if use_uproot else UsingROOT
+    full_list = process_files.expand_file_list(files)
+    numentries = process_files.total_entries(full_list, tree_name)
 
     data = {}
     data["eventtype"] = eventtype
     data["name"] = dataset
-    data["nevents"] = uproot.numentries(full_list, tree_name)
+    data["nevents"] = numentries
     data["nfiles"] = len(full_list)
     data["files"] = full_list
+    data["treename"] = tree_name
 
     return data
 
@@ -81,6 +105,10 @@ def select_default(values):
 
 def prepare_contents(datasets):
     datasets = [vars(data) if isinstance(data, read.Dataset) else data for data in datasets]
+    for d in datasets:
+        if "associates" in d:
+            del d["associates"]
+
     # build the default properties
     values = defaultdict(list)
     for data in datasets:
@@ -89,6 +117,10 @@ def prepare_contents(datasets):
 
     defaults = {}
     for key, vals in values.items():
+        if key == "name": continue
+        is_in_all_datasets = len(vals) == len(datasets)
+        if not is_in_all_datasets:
+            continue
         new_default = select_default(vals)
         if new_default:
             defaults[key] = new_default
@@ -158,7 +190,7 @@ def process_args(args=None):
         split = arg.split("=", 2)
         return split
 
-    parser.add_argument("-m", "--meta", action="append", type=split_meta,
+    parser.add_argument("-m", "--meta", action="append", type=split_meta, default=[],
                         help="Add other metadata (eg cross-section, run era) for this dataset." 
                              + "  Must take the form of 'key=value' ")
     args = parser.parse_args()
