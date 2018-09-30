@@ -43,7 +43,7 @@ setup(
     install_requires=requirements,
     extras_require={'ROOT':  ["rootpy"],
 		    'uproot': ["uproot"],
-		   }
+		   },
     dependency_links=repositories,
     license="Apache Software License 2.0",
     long_description=readme, #+ '\n\n' + history,
