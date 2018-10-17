@@ -1,4 +1,4 @@
-image: kreczko/root-debian:6-14-04-python2.7
+image: python
 
 variables:
   TWINE_REPOSITORY_URL: https://upload.pypi.org/legacy/
@@ -47,7 +47,6 @@ python37:
   script: tox -e py37
 
 coverage:
-  image: kreczko/root-debian:6-14-04-python3.6
   stage: test
   script: make coverage
 
