@@ -1,3 +1,5 @@
+image: kreczko/root-debian:6-14-04-python2.7
+
 variables:
   TWINE_REPOSITORY_URL: https://upload.pypi.org/legacy/
 
