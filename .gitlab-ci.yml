@@ -23,7 +23,7 @@ linters:
 build:
   stage: build
   script:
-    - make install-dev
+    - make install-dev-uproot
     - make dist
   artifacts:
     paths:
