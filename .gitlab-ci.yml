@@ -49,9 +49,9 @@ coverage:
   stage: test
   script: make coverage
 
-docs:
-  stage: test
-  script: make docs
+# docs:
+#   stage: test
+#   script: make docs
 
 speed-challenge:
   stage: challenges
