@@ -4,7 +4,7 @@ import operator
 import os
 import glob
 from fast_curator import read
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 import logging
 logger = logging.getLogger(__name__)
 
@@ -17,15 +17,18 @@ class UsingUproot():
         full_list = []
         for name in files:
             if name.startswith("root:") and glob.has_magic(name):
-                    logger.error("Uproot cannot presently handle xrootd-served files with wild-cards. Use the ROOT version of this command instead?")
-                    raise RuntimeError("Trying to wild-card remote files with uproot")
+                msg = "Uproot cannot presently handle xrootd-served files with wild-cards."
+                msg += " Use the ROOT version of this command instead?"
+                logger.error(msg)
+                raise RuntimeError(
+                    "Trying to wild-card remote files with uproot")
             expanded = UsingUproot.uproot.tree._filename_explode(name)
             full_list += [str(exp) for exp in expanded]
         return full_list
 
     @staticmethod
     def total_entries(files, tree):
-        return usingUproot.proot.numentries(files, tree)
+        return UsingUproot.uproot.numentries(files, tree)
 
 
 class UsingROOT():
@@ -35,7 +38,7 @@ class UsingROOT():
         from rootpy.utils.ext_glob import glob
         full_list = []
         for name in files:
-            expanded =  glob(name)
+            expanded = glob(name)
             full_list += [str(exp) for exp in expanded]
         return full_list
 
@@ -54,7 +57,9 @@ def prepare_file_list(files, dataset, eventtype, tree_name, use_uproot=False, ab
     """
 
     if use_uproot and any(map(lambda x: glob.has_magic(x) and x.startswith("root:"), files)):
-        logger.warning("Switching to ROOT, despite being told to use uproot since you want to wild-card search xrootd remote files")
+        msg = "Switching to ROOT, despite being told to use uproot "
+        msg += "since you want to wild-card search xrootd remote files"
+        logger.warning(msg)
         use_uproot = False
     process_files = UsingUproot if use_uproot else UsingROOT
     full_list = process_files.expand_file_list(files)
@@ -87,7 +92,8 @@ def select_default(values):
 
 
 def prepare_contents(datasets):
-    datasets = [vars(data) if isinstance(data, read.Dataset) else data for data in datasets]
+    datasets = [vars(data) if isinstance(data, read.Dataset)
+                else data for data in datasets]
     for d in datasets:
         if "associates" in d:
             del d["associates"]
@@ -100,7 +106,8 @@ def prepare_contents(datasets):
 
     defaults = {}
     for key, vals in values.items():
-        if key == "name": continue
+        if key == "name":
+            continue
         is_in_all_datasets = len(vals) == len(datasets)
         if not is_in_all_datasets:
             continue
@@ -138,7 +145,8 @@ def write_yaml(dataset, out_file):
         def increase_indent(self, flow=False, indentless=False):
             return super(MyDumper, self).increase_indent(flow, False)
 
-    yaml_contents = yaml.dump(contents, Dumper=MyDumper, default_flow_style=False)
+    yaml_contents = yaml.dump(
+        contents, Dumper=MyDumper, default_flow_style=False)
     with open(out_file, 'w') as out:
         out.write(yaml_contents)
     print(yaml_contents)

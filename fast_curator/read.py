@@ -1,7 +1,5 @@
 from __future__ import print_function
-import os
 import six
-import logging
 import sys
 
 if sys.version_info[0] >= 3.3:
@@ -22,8 +20,8 @@ def associate_by_ext_suffix(datasets):
         associates.append(dataset)
         names = [a.name for a in associates]
         for index in range(len(associates)):
-            associates[index].associates = names[:index] 
-            associates[index].associates += names[index+1:] 
+            associates[index].associates = names[:index]
+            associates[index].associates += names[index + 1:]
 
 
 def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
@@ -36,7 +34,7 @@ def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
                         find_associates=associate_by_ext_suffix)
 
 
-def get_datasets(datasets_dict, defaults={}, 
+def get_datasets(datasets_dict, defaults={},
                  find_associates=associate_by_ext_suffix):
     datasets = []
     defaults.update(datasets_dict.get("defaults", {}))
@@ -65,5 +63,6 @@ def _from_dict(dataset, default):
     cfg = default.copy()
     cfg.update(dataset)
     if "name" not in cfg:
-        raise RuntimeError("Dataset provided as dict, without key-value pair for 'name'")
+        raise RuntimeError(
+            "Dataset provided as dict, without key-value pair for 'name'")
     return cfg
