@@ -4,6 +4,7 @@ variables:
   TWINE_REPOSITORY_URL: https://upload.pypi.org/legacy/
 
 before_script:
+  - pip install pkgconfig>=1.4.0 # Seems to need updating in python3 images
   - pip install -r .requirements_dev.txt
 
 stages:
