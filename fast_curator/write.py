@@ -73,7 +73,7 @@ def prepare_file_list(files, dataset, eventtype, tree_name, use_uproot=False, ab
     data["nevents"] = numentries
     data["nfiles"] = len(full_list)
     data["files"] = full_list
-    data["treename"] = tree_name
+    data["tree"] = tree_name
 
     return data
 
