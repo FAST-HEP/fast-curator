@@ -2,13 +2,7 @@ variables:
   TWINE_REPOSITORY_URL: https://upload.pypi.org/legacy/
 
 before_script:
-  - curl -O https://bootstrap.pypa.io/get-pip.py
-  - python get-pip.py
   - pip install -r requirements_dev.txt
-
-after_script:
-  - pip install codecov
-  # - codecov --token=<>
 
 stages:
   - quick-checks
@@ -49,6 +43,11 @@ python37:
   image: python:3.7
   stage: test
   script: tox -e py37
+
+coverage:
+  image: kreczko/root-debian:6-14-04-python3.6
+  stage: test
+  script: make coverage
 
 docs:
   stage: test
