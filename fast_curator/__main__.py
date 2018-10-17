@@ -37,7 +37,6 @@ def main(args=None):
     write.add_meta(dataset, args.meta)
 
     content = write.write_yaml(dataset, args.output)
-    return content
 
 
 if __name__ == "__main__":

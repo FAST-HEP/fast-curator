@@ -64,7 +64,7 @@ def prepare_file_list(files, dataset, eventtype, tree_name, use_uproot=False, ab
     process_files = UsingUproot if use_uproot else UsingROOT
     full_list = process_files.expand_file_list(files)
     if absolute_paths:
-        full_list = [os.path.realpath(f) for f in full_list if ':' not in f]
+        full_list = [os.path.realpath(f)  if ':' not in f else f for f in full_list]
     numentries = process_files.total_entries(full_list, tree_name)
 
     data = {}
