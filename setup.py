@@ -8,15 +8,15 @@ from setuptools import setup, find_packages
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-#with open('HISTORY.rst') as history_file:
-#    history = history_file.read()
+# with open('HISTORY.rst') as history_file:
+#     history = history_file.read()
 
 requirements = ['pyyaml', 'six']
 repositories = []
 
 setup_requirements = ['pytest-runner', ]
 
-test_requirements = ['pytest', 'flake8' ]
+test_requirements = ['pytest', 'flake8', 'pytest-cov']
 
 setup(
     author="F.A.S.T",
@@ -42,11 +42,11 @@ setup(
     },
     install_requires=requirements,
     extras_require={'ROOT':  ["rootpy"],
-		    'uproot': ["uproot"],
-		   },
+                    'uproot': ["uproot"],
+                    },
     dependency_links=repositories,
     license="Apache Software License 2.0",
-    long_description=readme, #+ '\n\n' + history,
+    long_description=readme,  # + '\n\n' + history,
     include_package_data=True,
     keywords=['ROOT', 'analysis', 'particle physics', 'HEP', 'F.A.S.T'],
     name='fast-curator',
