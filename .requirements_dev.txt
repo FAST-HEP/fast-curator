@@ -11,5 +11,3 @@ twine==1.12.1
 pytest==3.8.1
 pytest-runner==4.2
 pytest-cov==2.6.0
-
-uproot==3.2.5
