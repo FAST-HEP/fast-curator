@@ -36,7 +36,7 @@ def main(args=None):
                                       eventtype=args.eventtype, tree_name=args.tree_name)
     write.add_meta(dataset, args.meta)
 
-    content = write.write_yaml(dataset, args.output)
+    write.write_yaml(dataset, args.output)
 
 
 if __name__ == "__main__":
