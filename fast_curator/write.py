@@ -2,7 +2,6 @@ from __future__ import print_function
 import itertools
 import operator
 import os
-import glob
 from fast_curator import read
 from collections import defaultdict
 import logging
