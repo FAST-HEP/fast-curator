@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class UsingUproot():
     import uproot
-    import xrootd_glob
+    from . import xrootd_glob
 
     @staticmethod
     def expand_file_list(files):
