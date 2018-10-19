@@ -11,18 +11,13 @@ logger = logging.getLogger(__name__)
 
 class UsingUproot():
     import uproot
+    import xrootd_glob
 
     @staticmethod
     def expand_file_list(files):
         full_list = []
         for name in files:
-            if name.startswith("root:") and glob.has_magic(name):
-                msg = "Uproot cannot presently handle xrootd-served files with wild-cards."
-                msg += " Use the ROOT version of this command instead?"
-                logger.error(msg)
-                raise RuntimeError(
-                    "Trying to wild-card remote files with uproot")
-            expanded = UsingUproot.uproot.tree._filename_explode(name)
+            expanded = UsingUproot.xrootd_glob.glob(name)
             full_list += [str(exp) for exp in expanded]
         return full_list
 
@@ -51,16 +46,11 @@ class UsingROOT():
         return chain.GetEntries()
 
 
-def prepare_file_list(files, dataset, eventtype, tree_name, use_uproot=False, absolute_paths=True):
+def prepare_file_list(files, dataset, eventtype, tree_name, use_uproot=True, absolute_paths=True):
     """
     Expands all globs in the file lists and creates a dataframe similar to those from a DAS query
     """
 
-    if use_uproot and any(map(lambda x: glob.has_magic(x) and x.startswith("root:"), files)):
-        msg = "Switching to ROOT, despite being told to use uproot "
-        msg += "since you want to wild-card search xrootd remote files"
-        logger.warning(msg)
-        use_uproot = False
     process_files = UsingUproot if use_uproot else UsingROOT
     full_list = process_files.expand_file_list(files)
     if absolute_paths:
