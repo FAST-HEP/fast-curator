@@ -1,7 +1,6 @@
 """
 Reproduce the standard glob package behaviour
 """
-from pyxrootd.client import FileSystem
 import glob as gl
 import os
 import fnmatch
@@ -32,11 +31,12 @@ def glob(pathname):
     if not gl.has_magic(pathname):
         return [pathname]
 
-    # Else use ROOT's remote system querying
+    # Else try xrootd instead
     return xrootd_glob(pathname)
 
 
 def xrootd_glob(pathname):
+    from pyxrootd.client import FileSystem
     # Split the pathname into a directory and basename
     dirs, basename = os.path.split(pathname)
 
