@@ -5,19 +5,14 @@
 fast-curator
 =============
 Create, read and write dictionary descriptions of input datasets to process.
-Currently all datasets are expected to be built from ROOT Trees.
+Currently all datasets are expected to be built from sets of ROOT Trees.
 
 ## Requirements
 
 
 ## Installing
 ```
-pip install --user fast-curator[uproot]
-```
-Note that if you wish to handle large numbers of remote files, such as with wild-carded xrootd paths, you currently need to use the `ROOT` version of this package and not the `uproot` version.
-That means changing the above command to:
-```
-pip install --user fast-curator[ROOT]
+pip install --user fast-curator
 ```
 
 ## Usage
@@ -26,13 +21,28 @@ pip install --user fast-curator[ROOT]
 fast_curator -o output_file_list.txt -t tree_name -d dataset_name --mc input/files/*root
 
 # Single XROOTD files:
-fast_curator -o output_file_list.txt -t tree_name -d dataset_name --mc root://my.domain.with.files://input/files/one_file.root
+fast_curator -o output_file_list.txt --mc root://my.domain.with.files://input/files/one_file.root
 
-# XROOTD files with a glob (needs the ROOT version of fast-curator, see above)
-fast_curator -o output_file_list.txt -t tree_name -d dataset_name --mc root://my.domain.with.files://input/files/*.root
+# XROOTD files with several globs
+fast_curator -o output_file_list.txt --mc root://my.domain.with.files://inp*/files/*.root
 ```
 
-If the command is called multiple times with the same output file (using the `-o` option), the additional files specified will be appended to the output file.
+Notes:
+1. If the command is called multiple times with the same output file (using the `-o` option), the additional files specified will be appended to the output file.
+2. Arbitrary meta-data (such as cross-section, data quality, generator precision, etc) can be added to each dataset with
+   the `-m` option.
 
-## Documentation
+For more guidance try the built-in help:
+```
+fast_curator --help
+```
+
+## Reading dataset files back
+```
+import fast_curator
+datasets = fast_curator.read.from_yaml("my_dataset_file.yml")
+```
+Will return a list of datasets with the `default` section applied to each dataset.
+
+## Further Documentation
 Is on its way...

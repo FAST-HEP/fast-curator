@@ -11,7 +11,7 @@ with open('README.md') as readme_file:
 # with open('HISTORY.rst') as history_file:
 #     history = history_file.read()
 
-requirements = ['pyyaml', 'six']
+requirements = ['pyyaml', 'six', 'uproot']
 repositories = []
 
 setup_requirements = ['pytest-runner', ]
@@ -42,7 +42,6 @@ setup(
     },
     install_requires=requirements,
     extras_require={'ROOT':  ["rootpy"],
-                    'uproot': ["uproot"],
                     },
     dependency_links=repositories,
     license="Apache Software License 2.0",
@@ -56,6 +55,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://gitlab.cern.ch/fast-hep/public/fast-curator',
-    version='0.1.3',
+    version='0.1.4',
     zip_safe=True,
 )
