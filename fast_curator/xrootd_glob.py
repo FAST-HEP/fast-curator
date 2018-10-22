@@ -47,20 +47,21 @@ def xrootd_glob(pathname):
 
     files = []
     for dirname in dirs:
-        # Uses `TSystem` to open the directory.
-        # TSystem itself wraps up the calls needed to query xrootd.
         host, path = split_url(dirname)
         query = FileSystem(host)
 
-        if query:
-            _, dirlist = query.dirlist(path)
-            for entry in dirlist["dirlist"]:
-                filename = entry["name"]
-                if filename in [".", ".."]:
-                    continue
-                if not fnmatch.fnmatchcase(filename, basename):
-                    continue
-                files.append(os.path.join(dirname, filename))
+        if not query:
+            raise RuntimeError("Cannot prepare xrootd query")
+
+        _, dirlist = query.dirlist(path)
+        for entry in dirlist["dirlist"]:
+            filename = entry["name"]
+            if filename in [".", ".."]:
+                continue
+            if not fnmatch.fnmatchcase(filename, basename):
+                continue
+            files.append(os.path.join(dirname, filename))
+
     return files
 
 
