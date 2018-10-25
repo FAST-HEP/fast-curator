@@ -24,20 +24,35 @@ def associate_by_ext_suffix(datasets):
             associates[index].associates += names[index + 1:]
 
 
-def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
+def _load_yaml(path):
     import yaml
     with open(path, 'r') as f:
         datasets_dict = yaml.load(f)
     if not datasets_dict:
         raise RuntimeError("Empty config file in '%s'" % path)
+    return datasets_dict
+
+
+def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
+    datasets_dict = _load_yaml(path)
     return get_datasets(datasets_dict, defaults,
                         find_associates=associate_by_ext_suffix)
 
 
 def get_datasets(datasets_dict, defaults={},
-                 find_associates=associate_by_ext_suffix):
+                 find_associates=associate_by_ext_suffix, imported=None):
     datasets = []
     defaults.update(datasets_dict.get("defaults", {}))
+
+    if imported is None:
+        imported = set()
+    for import_file in datasets_dict.get("import", []):
+        if import_file in imported:
+            continue
+        imported.insert(import_file)
+        contents = _load_yaml(import_file)
+        datasets += get_datasets(contents, defaults=defaults.copy(),
+                                 find_associates=find_associates, imported=imported)
     for dataset in datasets_dict["datasets"]:
         if isinstance(dataset, six.string_types):
             dataset_kwargs = _from_string(dataset, defaults)
