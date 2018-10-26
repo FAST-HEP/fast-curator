@@ -1,6 +1,7 @@
 from __future__ import print_function
 import six
 import sys
+import os
 
 if sys.version_info[0] >= 3.3:
     from types import SimpleNamespace as Dataset
@@ -35,26 +36,29 @@ def _load_yaml(path):
 
 def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
     datasets_dict = _load_yaml(path)
-    return get_datasets(datasets_dict, defaults,
+    this_dir = os.path.dirname(path)
+    return get_datasets(datasets_dict, defaults, this_dir=this_dir,
                         find_associates=associate_by_ext_suffix)
 
 
 def get_datasets(datasets_dict, defaults={},
-                 find_associates=associate_by_ext_suffix, imported=None):
+                 find_associates=associate_by_ext_suffix, already_imported=None, this_dir=None):
     datasets = []
     defaults.update(datasets_dict.get("defaults", {}))
     if "import" not in datasets_dict and "datasets" not in datasets_dict:
         raise RuntimeError("Neither 'datasets' nor 'import' were specified in file list")
 
-    if imported is None:
-        imported = set()
+    if already_imported is None:
+        already_imported = set()
     for import_file in datasets_dict.get("import", []):
-        if import_file in imported:
+        if this_dir:
+            import_file = import_file.format(this_dir=this_dir)
+        if import_file in already_imported:
             continue
-        imported.add(import_file)
+        already_imported.add(import_file)
         contents = _load_yaml(import_file)
         datasets += get_datasets(contents, defaults=defaults.copy(),
-                                 find_associates=find_associates, imported=imported)
+                                 find_associates=find_associates, already_imported=already_imported)
     for dataset in datasets_dict.get("datasets", []):
         if isinstance(dataset, six.string_types):
             dataset_kwargs = _from_string(dataset, defaults)
