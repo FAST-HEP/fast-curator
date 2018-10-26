@@ -1,6 +1,7 @@
 from __future__ import print_function
 import six
 import sys
+import os
 
 if sys.version_info[0] >= 3.3:
     from types import SimpleNamespace as Dataset
@@ -24,21 +25,41 @@ def associate_by_ext_suffix(datasets):
             associates[index].associates += names[index + 1:]
 
 
-def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
+def _load_yaml(path):
     import yaml
     with open(path, 'r') as f:
         datasets_dict = yaml.load(f)
     if not datasets_dict:
         raise RuntimeError("Empty config file in '%s'" % path)
-    return get_datasets(datasets_dict, defaults,
+    return datasets_dict
+
+
+def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
+    datasets_dict = _load_yaml(path)
+    this_dir = os.path.dirname(path)
+    return get_datasets(datasets_dict, defaults, this_dir=this_dir,
                         find_associates=associate_by_ext_suffix)
 
 
 def get_datasets(datasets_dict, defaults={},
-                 find_associates=associate_by_ext_suffix):
+                 find_associates=associate_by_ext_suffix, already_imported=None, this_dir=None):
     datasets = []
     defaults.update(datasets_dict.get("defaults", {}))
-    for dataset in datasets_dict["datasets"]:
+    if "import" not in datasets_dict and "datasets" not in datasets_dict:
+        raise RuntimeError("Neither 'datasets' nor 'import' were specified in file list")
+
+    if already_imported is None:
+        already_imported = set()
+    for import_file in datasets_dict.get("import", []):
+        if this_dir:
+            import_file = import_file.format(this_dir=this_dir)
+        if import_file in already_imported:
+            continue
+        already_imported.add(import_file)
+        contents = _load_yaml(import_file)
+        datasets += get_datasets(contents, defaults=defaults.copy(),
+                                 find_associates=find_associates, already_imported=already_imported)
+    for dataset in datasets_dict.get("datasets", []):
         if isinstance(dataset, six.string_types):
             dataset_kwargs = _from_string(dataset, defaults)
         elif isinstance(dataset, dict):
