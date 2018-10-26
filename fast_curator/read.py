@@ -43,17 +43,19 @@ def get_datasets(datasets_dict, defaults={},
                  find_associates=associate_by_ext_suffix, imported=None):
     datasets = []
     defaults.update(datasets_dict.get("defaults", {}))
+    if "import" not in datasets_dict and "datasets" not in datasets_dict:
+      raise RuntimeError("Neither 'datasets' nor 'import' were specified in file list")
 
     if imported is None:
         imported = set()
     for import_file in datasets_dict.get("import", []):
         if import_file in imported:
             continue
-        imported.insert(import_file)
+        imported.add(import_file)
         contents = _load_yaml(import_file)
         datasets += get_datasets(contents, defaults=defaults.copy(),
                                  find_associates=find_associates, imported=imported)
-    for dataset in datasets_dict["datasets"]:
+    for dataset in datasets_dict.get("datasets", []):
         if isinstance(dataset, six.string_types):
             dataset_kwargs = _from_string(dataset, defaults)
         elif isinstance(dataset, dict):
