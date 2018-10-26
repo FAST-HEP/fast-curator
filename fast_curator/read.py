@@ -44,7 +44,7 @@ def get_datasets(datasets_dict, defaults={},
     datasets = []
     defaults.update(datasets_dict.get("defaults", {}))
     if "import" not in datasets_dict and "datasets" not in datasets_dict:
-      raise RuntimeError("Neither 'datasets' nor 'import' were specified in file list")
+        raise RuntimeError("Neither 'datasets' nor 'import' were specified in file list")
 
     if imported is None:
         imported = set()
