@@ -119,9 +119,9 @@ def prepare_contents(datasets):
     return contents
 
 
-def write_yaml(dataset, out_file):
+def write_yaml(dataset, out_file, append=True):
     import yaml
-    if os.path.exists(out_file):
+    if os.path.exists(out_file) and append:
         datasets = read.from_yaml(out_file)
         datasets.append(dataset)
         contents = prepare_contents(datasets)
@@ -138,9 +138,8 @@ def write_yaml(dataset, out_file):
         contents, Dumper=MyDumper, default_flow_style=False)
     with open(out_file, 'w') as out:
         out.write(yaml_contents)
-    print(yaml_contents)
 
-    return contents
+    return yaml_contents
 
 
 def add_meta(dataset, meta):

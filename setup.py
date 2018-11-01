@@ -37,7 +37,8 @@ setup(
     description="F.A.S.T. package for describing datasets",
     entry_points={
         'console_scripts': [
-            'fast_curator=fast_curator.__main__:main',
+            'fast_curator=fast_curator.__main__:main_write',
+            'fast_curator_check=fast_curator.__main__:main_check',
         ],
     },
     install_requires=requirements,

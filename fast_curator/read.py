@@ -37,6 +37,7 @@ def _load_yaml(path):
 def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
     datasets_dict = _load_yaml(path)
     this_dir = os.path.dirname(path)
+    print("BEK", path, this_dir)
     return get_datasets(datasets_dict, defaults, this_dir=this_dir,
                         find_associates=associate_by_ext_suffix)
 
@@ -57,7 +58,7 @@ def get_datasets(datasets_dict, defaults={},
             continue
         already_imported.add(import_file)
         contents = _load_yaml(import_file)
-        datasets += get_datasets(contents, defaults=defaults.copy(),
+        datasets += get_datasets(contents, defaults=defaults.copy(), this_dir=os.path.dirname(import_file),
                                  find_associates=find_associates, already_imported=already_imported)
     for dataset in datasets_dict.get("datasets", []):
         if isinstance(dataset, six.string_types):
