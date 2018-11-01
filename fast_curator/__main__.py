@@ -47,7 +47,7 @@ def process_args_check(args=None):
     parser.add_argument("files", nargs='*')
     parser.add_argument("-o", "--output", default=None,
                         type=str, help="Name of output file list to expand things to")
-    parser.add_argument("-f", "--fields", default="nfiles", 
+    parser.add_argument("-f", "--fields", default="nfiles",
                         type=str, help="Comma-separated list of fields to dump for each dataset ")
     args = parser.parse_args()
 
@@ -67,7 +67,7 @@ def main_check(args=None):
             msg = "{d.name}: corrupted dataset: bad nfiles value, should be: {len}, got: {d.nfiles}"
             print(msg.format(d=dataset, len=len(dataset.files)))
             continue
-        print("==",dataset.name,"==")
+        print("==", dataset.name, "==")
         for field in args.fields:
             msg = "   %(field)s = {d.%(field)s}" % dict(field=field)
             print(msg.format(d=dataset))
