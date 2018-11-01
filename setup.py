@@ -37,7 +37,8 @@ setup(
     description="F.A.S.T. package for describing datasets",
     entry_points={
         'console_scripts': [
-            'fast_curator=fast_curator.__main__:main',
+            'fast_curator=fast_curator.__main__:main_write',
+            'fast_curator_check=fast_curator.__main__:main_check',
         ],
     },
     install_requires=requirements,
@@ -55,6 +56,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://gitlab.cern.ch/fast-hep/public/fast-curator',
-    version='0.1.5',
+    version='0.1.6',
     zip_safe=True,
 )

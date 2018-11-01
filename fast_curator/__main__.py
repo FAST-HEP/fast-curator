@@ -1,7 +1,9 @@
+from __future__ import print_function
 from . import write
+from . import read
 
 
-def process_args(args=None):
+def process_args_write(args=None):
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("files", nargs='*')
@@ -30,8 +32,8 @@ def process_args(args=None):
     return args
 
 
-def main(args=None):
-    args = process_args(args)
+def main_write(args=None):
+    args = process_args_write(args)
     dataset = write.prepare_file_list(files=args.files, dataset=args.dataset,
                                       eventtype=args.eventtype, tree_name=args.tree_name)
     write.add_meta(dataset, args.meta)
@@ -39,5 +41,38 @@ def main(args=None):
     write.write_yaml(dataset, args.output)
 
 
-if __name__ == "__main__":
-    main()
+def process_args_check(args=None):
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("files", nargs='*')
+    parser.add_argument("-o", "--output", default=None,
+                        type=str, help="Name of output file list to expand things to")
+    parser.add_argument("-f", "--fields", default="nfiles",
+                        type=str, help="Comma-separated list of fields to dump for each dataset ")
+    args = parser.parse_args()
+
+    args.fields = args.fields.split(",")
+    return args
+
+
+def main_check(args=None):
+    args = process_args_check(args)
+
+    datasets = []
+    for infile in args.files:
+        datasets += read.from_yaml(infile)
+
+    for dataset in datasets:
+        if len(dataset.files) != dataset.nfiles:
+            msg = "{d.name}: corrupted dataset: bad nfiles value, should be: {len}, got: {d.nfiles}"
+            print(msg.format(d=dataset, len=len(dataset.files)))
+            continue
+        print("==", dataset.name, "==")
+        for field in args.fields:
+            msg = "   %(field)s = {d.%(field)s}" % dict(field=field)
+            print(msg.format(d=dataset))
+    print("Total number of datasets:", len(datasets))
+
+    if args.output:
+        datasets = write.prepare_contents(datasets)
+        write.write_yaml(datasets, args.output, append=False)
