@@ -1,4 +1,3 @@
-from __future__ import print_function
 import six
 import sys
 import os
@@ -37,7 +36,6 @@ def _load_yaml(path):
 def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
     datasets_dict = _load_yaml(path)
     this_dir = os.path.dirname(path)
-    print("BEK", path, this_dir)
     return get_datasets(datasets_dict, defaults, this_dir=this_dir,
                         find_associates=associate_by_ext_suffix)
 

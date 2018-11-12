@@ -86,4 +86,4 @@ install: clean ## install the package to the active Python's site-packages
 	python setup.py install
 
 install-dev-uproot: clean
-	pip install -e .[uproot]
+	pip install -e .
