@@ -18,7 +18,8 @@ def process_args_write(args=None):
     parser.add_argument("-t", "--tree-name", default="Events", type=str,
                         help="Provide the name of the tree in the input files to calculate number of events, etc")
     parser.add_argument("-u", "--user", default=[], type=str, action="append",
-                        help="Add a user function to extend the dataset dictionary, eg. my_package.my_module.some_function")
+                        help="Add a user function to extend the dataset dictionary,"
+                             " eg. my_package.my_module.some_function")
 
     def split_meta(arg):
         if "=" not in arg:
