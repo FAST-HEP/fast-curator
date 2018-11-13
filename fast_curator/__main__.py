@@ -17,6 +17,9 @@ def process_args_write(args=None):
                         help="Specify if this dataset contains real data")
     parser.add_argument("-t", "--tree-name", default="Events", type=str,
                         help="Provide the name of the tree in the input files to calculate number of events, etc")
+    parser.add_argument("-u", "--user", default=[], type=str, action="append",
+                        help="Add a user function to extend the dataset dictionary,"
+                             " eg. my_package.my_module.some_function")
 
     def split_meta(arg):
         if "=" not in arg:
@@ -28,15 +31,18 @@ def process_args_write(args=None):
     parser.add_argument("-m", "--meta", action="append", type=split_meta, default=[],
                         help="Add other metadata (eg cross-section, run era) for this dataset."
                              + "  Must take the form of 'key=value' ")
-    args = parser.parse_args()
-    return args
+    return parser
 
 
 def main_write(args=None):
-    args = process_args_write(args)
+    parser = process_args_write(args)
+    args = parser.parse_args()
+
     dataset = write.prepare_file_list(files=args.files, dataset=args.dataset,
                                       eventtype=args.eventtype, tree_name=args.tree_name)
     write.add_meta(dataset, args.meta)
+    for user_func in args.user:
+        write.process_user_function(dataset, user_func)
 
     write.write_yaml(dataset, args.output)
 

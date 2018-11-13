@@ -148,3 +148,15 @@ def add_meta(dataset, meta):
             msg = "Meta data '%s' will override an existing value" % key
             raise RuntimeError(msg)
         dataset[key] = value
+
+
+def process_user_function(dataset, user_func):
+    import importlib
+    path = user_func.split(".")
+    mod_name = ".".join(path[:-1])
+    module = importlib.import_module(mod_name)
+
+    func_name = path[-1]
+    function = getattr(module, func_name)
+
+    function(dataset)
