@@ -74,7 +74,7 @@ def select_default(values):
     if not groups:
         return None
     most_common, number_items = max(groups, key=operator.itemgetter(1))
-    is_unique = len(map(lambda x: x[1] == number_items, groups)) == 1
+    is_unique = sum([1 for group in groups if group[1] == number_items]) == 1
     if not is_unique:
         return None
     return most_common
