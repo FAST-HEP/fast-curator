@@ -49,7 +49,9 @@ python37:
 
 coverage:
   stage: test
-  script: make coverage
+  script:
+    - pip install .
+    - make coverage
 
 # docs:
 #   stage: test
