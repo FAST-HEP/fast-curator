@@ -6,6 +6,7 @@ variables:
 before_script:
 # - pip install pkgconfig>=1.4.0 # Seems to need updating in python3 images
   - pip install -r .requirements_dev.txt
+  - pip install tox pytest-cov pytest
 
 stages:
   - quick-checks
