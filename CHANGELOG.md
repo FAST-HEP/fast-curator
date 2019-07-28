@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Make sure the `args` parameter is passed through to the main functions in `__main__.py`, issue #9. [@benkrikler](https://github.com/benkrikler)
-- Switch to pyyaml safe_load for better security, issue #8. [@benkrikler](https://github.com/benkrikler)
+- Switch to pyyaml `safe_load` for better security, issue #8. [@benkrikler](https://github.com/benkrikler)
+- Expand an input file's path to an absolute path for `this_dir` to be meaningful, issue #7. [@benkrikler](https://github.com/benkrikler)
 
 ### Removed
 
