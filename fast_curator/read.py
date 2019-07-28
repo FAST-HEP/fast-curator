@@ -35,7 +35,7 @@ def _load_yaml(path):
 
 def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
     datasets_dict = _load_yaml(path)
-    this_dir = os.path.dirname(path)
+    this_dir = os.path.dirname(os.path.abspath(path))
     return get_datasets(datasets_dict, defaults, this_dir=this_dir,
                         find_associates=associate_by_ext_suffix)
 
