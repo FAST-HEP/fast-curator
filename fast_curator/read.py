@@ -27,7 +27,7 @@ def associate_by_ext_suffix(datasets):
 def _load_yaml(path):
     import yaml
     with open(path, 'r') as f:
-        datasets_dict = yaml.load(f)
+        datasets_dict = yaml.safe_load(f)
     if not datasets_dict:
         raise RuntimeError("Empty config file in '%s'" % path)
     return datasets_dict
