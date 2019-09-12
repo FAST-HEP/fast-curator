@@ -20,6 +20,11 @@ def arg_parser_write():
     parser.add_argument("-u", "--user", default=[], type=str, action="append",
                         help="Add a user function to extend the dataset dictionary,"
                              " eg. my_package.my_module.some_function")
+    parser.add_argument("-q", "--query-type", default="xrootd", type=str,
+                        help="How to interpret file arguments to this command."
+                             " Allows the use of experiment-specific file catalogues or wild-carded file paths."
+                             " Known query types are: %s" % ", ".join(write.known_expanders.keys()),
+                        )
 
     def split_meta(arg):
         if "=" not in arg:
@@ -38,6 +43,7 @@ def main_write(args=None):
     args = arg_parser_write().parse_args(args=args)
 
     dataset = write.prepare_file_list(files=args.files, dataset=args.dataset,
+                                      expand_files=args.query_type,
                                       eventtype=args.eventtype, tree_name=args.tree_name)
     write.add_meta(dataset, args.meta)
     for user_func in args.user:
