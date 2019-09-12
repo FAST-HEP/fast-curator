@@ -3,6 +3,7 @@
 
 """The setup script."""
 
+import os
 from setuptools import setup, find_packages
 
 with open('README.md') as readme_file:
@@ -10,6 +11,12 @@ with open('README.md') as readme_file:
 
 # with open('HISTORY.rst') as history_file:
 #     history = history_file.read()
+
+def get_version():
+    _globals = {}
+    with open(os.path.join("fast_curator", "version.py")) as version_file:
+        exec(version_file.read(), _globals)
+    return _globals["__version__"]
 
 requirements = ['pyyaml', 'six', 'uproot']
 repositories = []
@@ -56,6 +63,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://gitlab.cern.ch/fast-hep/public/fast-curator',
-    version='0.2.2',
+    version=get_version(),
     zip_safe=True,
 )
