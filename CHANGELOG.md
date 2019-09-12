@@ -6,9 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Generic interface for file path expansion, PR #20. [@benkrikler](https://github.com/benkrikler)
 
 ### Changed
-- Restructure package version numbering 
+- Restructure package version numbering, PR #19. [@benkrikler](https://github.com/benkrikler)
 
 ### Removed
 
