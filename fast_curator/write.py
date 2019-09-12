@@ -2,59 +2,24 @@ from __future__ import print_function
 import itertools
 import operator
 import os
-from fast_curator import read
+from . import read
+from .catalogues import get_file_list_expander, known_expanders
 from collections import defaultdict
 import logging
 logger = logging.getLogger(__name__)
 
 
-class UsingUproot():
-    import uproot
-    from . import xrootd_glob
-
-    @staticmethod
-    def expand_file_list(files):
-        full_list = []
-        for name in files:
-            expanded = UsingUproot.xrootd_glob.glob(name)
-            full_list += [str(exp) for exp in expanded]
-        return full_list
-
-    @staticmethod
-    def total_entries(files, tree):
-        return UsingUproot.uproot.numentries(files, tree)
-
-
-class UsingROOT():
-
-    @staticmethod
-    def expand_file_list(files):
-        from rootpy.utils.ext_glob import glob
-        full_list = []
-        for name in files:
-            expanded = glob(name)
-            full_list += [str(exp) for exp in expanded]
-        return full_list
-
-    @staticmethod
-    def total_entries(files, tree):
-        from rootpy import ROOT
-        chain = ROOT.TChain(tree)
-        for _file in files:
-            chain.Add(_file)
-        return chain.GetEntries()
-
-
-def prepare_file_list(files, dataset, eventtype, tree_name, use_uproot=True, absolute_paths=True):
+def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd", absolute_paths=True):
     """
     Expands all globs in the file lists and creates a dataframe similar to those from a DAS query
     """
 
-    process_files = UsingUproot if use_uproot else UsingROOT
-    full_list = process_files.expand_file_list(files)
+    if not callable(expand_files):
+        expand_files = get_file_list_expander(expand_files)
+    full_list = expand_files.expand_file_list(files)
     if absolute_paths:
         full_list = [os.path.realpath(f) if ':' not in f else f for f in full_list]
-    numentries = process_files.total_entries(full_list, tree_name)
+    numentries = expand_files.total_entries(full_list, tree_name)
 
     data = {}
     data["eventtype"] = eventtype
