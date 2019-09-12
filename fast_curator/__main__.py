@@ -24,7 +24,7 @@ def arg_parser_write():
                         help="How to interpret file arguments to this command."
                              " Allows the use of experiment-specific file catalogues or wild-carded file paths."
                              " Known query types are: %s" % ", ".join(write.known_expanders.keys()),
-                       )
+                        )
 
     def split_meta(arg):
         if "=" not in arg:
