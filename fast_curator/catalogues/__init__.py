@@ -16,8 +16,8 @@ class XrootdExpander():
         return full_list
 
     @staticmethod
-    def total_entries(*args, **kwargs):
-        return total_entries_uproot(*args, **kwargs)
+    def check_entries(*args, **kwargs):
+        return check_entries_uproot(*args, **kwargs)
 
 
 class LocalGlobExpander():
@@ -35,12 +35,18 @@ class LocalGlobExpander():
         return full_list
 
     @staticmethod
-    def total_entries(*args, **kwargs):
-        return total_entries_uproot(*args, **kwargs)
+    def check_entries(*args, **kwargs):
+        return check_entries_uproot(*args, **kwargs)
 
 
-def total_entries_uproot(files, tree):
-    return uproot.numentries(files, tree)
+def check_entries_uproot(files, tree, no_empty):
+    if not no_empty:
+        return files, uproot.numentries(files, tree)
+
+    totals = uproot.numentries(files, tree, total=False)
+    n_entries = sum(totals.values())
+    full_list = [name for name, entries in totals.items() if entries > 0]
+    return full_list, n_entries
 
 
 known_expanders = dict(

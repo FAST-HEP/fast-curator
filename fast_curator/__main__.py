@@ -25,6 +25,9 @@ def arg_parser_write():
                              " Allows the use of experiment-specific file catalogues or wild-carded file paths."
                              " Known query types are: %s" % ", ".join(write.known_expanders.keys()),
                         )
+    parser.add_argument("--no-empty-files", default=False, action="store_true",
+                        help="Don't include files that contain no events"
+                        )
 
     def split_meta(arg):
         if "=" not in arg:
@@ -44,6 +47,7 @@ def main_write(args=None):
 
     dataset = write.prepare_file_list(files=args.files, dataset=args.dataset,
                                       expand_files=args.query_type,
+                                      no_empty_files=args.no_empty_files,
                                       eventtype=args.eventtype, tree_name=args.tree_name)
     write.add_meta(dataset, args.meta)
     for user_func in args.user:
