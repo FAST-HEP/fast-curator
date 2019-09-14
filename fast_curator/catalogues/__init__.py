@@ -49,10 +49,9 @@ def check_entries_uproot(files, tree, no_empty):
     return full_list, n_entries
 
 
-known_expanders = dict(
-        xrootd=XrootdExpander,
-        local=LocalGlobExpander,
-        )
+known_expanders = dict(xrootd=XrootdExpander,
+                       local=LocalGlobExpander,
+                       )
 
 
 def get_file_list_expander(expander):

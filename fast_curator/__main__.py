@@ -38,7 +38,7 @@ def arg_parser_write():
 
     parser.add_argument("-m", "--meta", action="append", type=split_meta, default=[],
                         help="Add other metadata (eg cross-section, run era) for this dataset."
-                             + "  Must take the form of 'key=value' ")
+                             "  Must take the form of 'key=value' ")
     return parser
 
 

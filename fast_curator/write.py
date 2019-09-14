@@ -13,7 +13,8 @@ __all__ = ["known_expanders", "prepare_file_list", "write_yaml",
            "add_meta", "process_user_function"]
 
 
-def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd", absolute_paths=True, no_empty_files=True):
+def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd",
+                      absolute_paths=True, no_empty_files=True):
     """
     Expands all globs in the file lists and creates a dataframe similar to those from a DAS query
     """
