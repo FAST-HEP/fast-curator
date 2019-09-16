@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add option to ignore empty files, issue #5. [@benkrikler](https://github.com/benkrikler)
 
 ### Changed
+- Switch README to restructured text and update setup.py, PR 23.
 - Restructure package version numbering, PR #19. [@benkrikler](https://github.com/benkrikler)
 
 ### Removed
