@@ -27,13 +27,14 @@ Currently all datasets are expected to be built from sets of ROOT Trees.
 
 Installing
 ----------
-::
+.. code-block:: bash
 
         pip install --user fast-curator
 
 Usage
 -----
-::
+.. code-block:: bash
+
         # Local files:
         fast_curator -o output_file_list.txt -t tree_name -d dataset_name --mc input/files/*root
 
@@ -46,8 +47,7 @@ Usage
 
 Notes:
 1. If the command is called multiple times with the same output file (using the ``-o`` option), the additional files specified will be appended to the output file.
-2. Arbitrary meta-data (such as cross-section, data quality, generator precision, etc) can be added to each dataset with
-   the ``-m`` option.
+2. Arbitrary meta-data (such as cross-section, data quality, generator precision, etc) can be added to each dataset with the ``-m`` option.
 
 For more guidance try the built-in help::
 
@@ -55,7 +55,7 @@ For more guidance try the built-in help::
 
 Reading dataset files back
 --------------------------
-::
+.. code-block:: python
 
         import fast_curator
         datasets = fast_curator.read.from_yaml("my_dataset_file.yml")
