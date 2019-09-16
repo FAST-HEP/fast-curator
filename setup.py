@@ -6,7 +6,7 @@
 import os
 from setuptools import setup, find_packages
 
-with open('README.md') as readme_file:
+with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 # with open('HISTORY.rst') as history_file:
@@ -29,7 +29,7 @@ setup(
     author="F.A.S.T",
     author_email='fast-hep@cern.ch',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
@@ -49,12 +49,9 @@ setup(
         ],
     },
     install_requires=requirements,
-    extras_require={'ROOT':  ["rootpy"],
-                    },
     dependency_links=repositories,
     license="Apache Software License 2.0",
     long_description=readme,  # + '\n\n' + history,
-    long_description_content_type="text/markdown",
     include_package_data=True,
     keywords=['ROOT', 'analysis', 'particle physics', 'HEP', 'F.A.S.T'],
     name='fast-curator',
@@ -62,7 +59,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://gitlab.cern.ch/fast-hep/public/fast-curator',
+    url='https://github.com/FAST-HEP/fast-curator',
     version=get_version(),
     zip_safe=True,
 )
