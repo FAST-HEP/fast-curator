@@ -38,8 +38,8 @@ def test_add_meta():
 
 
 def test_prepare_contents():
-    datasets = [dict(name="foo", one=1, two=2, three="3", a=["ay", "ee", "eye"]),
-                dict(name="bar", one="1", two=2, three=3, a=["eye", "oh", "you"]),
+    datasets = [dict(name="foo", one="i1", two=2, three="3", a=["ay", "ee", "eye"]),
+                dict(name="bar", one="1", two=2, three="3i", a=["eye", "oh", "you"]),
                 dict(name="baz", one="1", two=2, three="3j", a=["oh"]),
                 ]
     contents = fc_write.prepare_contents(datasets)
@@ -71,7 +71,6 @@ def test_prepare_file_list(dummy_file_dir, nfiles, nevents, test_tree, empty, ex
                                            confirm_tree=test_tree,
                                            no_empty_files=empty)
 
-    print("BEK", file_list["files"])
     assert isinstance(file_list, dict)
     assert file_list["name"] == "data"
     assert file_list["eventtype"] == "mc"
