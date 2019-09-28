@@ -116,7 +116,7 @@ def write_yaml(dataset, out_file, append=True):
 
 def add_meta(dataset, meta):
     for key, value in meta:
-        if key in meta:
+        if key in dataset:
             msg = "Meta data '%s' will override an existing value" % key
             raise RuntimeError(msg)
         dataset[key] = value
