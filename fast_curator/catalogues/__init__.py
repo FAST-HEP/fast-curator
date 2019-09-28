@@ -39,14 +39,29 @@ class LocalGlobExpander():
         return check_entries_uproot(*args, **kwargs)
 
 
-def check_entries_uproot(files, tree, no_empty):
+def check_entries_uproot(files, tree, no_empty, confirm_tree=True):
+    no_empty = no_empty or confirm_tree
     if not no_empty:
         return files, uproot.numentries(files, tree)
 
     totals = uproot.numentries(files, tree, total=False)
-    n_entries = sum(totals.values())
-    full_list = [name for name, entries in totals.items() if entries > 0]
+    n_entries = 0
+    full_list = []
+    missing_trees = []
+    for name, entries in totals.items():
+        n_entries += entries
+        if not no_empty or entries > 0:
+            full_list.append(name)
+        if confirm_tree and entries == 0:
+            if tree not in uproot.open(name):
+                missing_trees.append(name)
+    if missing_trees:
+        msg = "Tree '%s' wasn't found for %d file(s): %s"
+        msg = msg % (tree, len(missing_trees), ", ".join(missing_trees))
+        raise RuntimeError(msg)
+
     return full_list, n_entries
+
 
 
 known_expanders = dict(xrootd=XrootdExpander,
