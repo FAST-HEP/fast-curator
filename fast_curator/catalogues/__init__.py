@@ -63,7 +63,6 @@ def check_entries_uproot(files, tree, no_empty, confirm_tree=True):
     return full_list, n_entries
 
 
-
 known_expanders = dict(xrootd=XrootdExpander,
                        local=LocalGlobExpander,
                        )
