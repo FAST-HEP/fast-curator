@@ -1,6 +1,7 @@
 import os
 import pytest
 import fast_curator.write as fc_write
+import fast_curator.catalogues as catalogues
 
 
 @pytest.fixture
@@ -59,16 +60,16 @@ def test_prepare_contents():
 
 
 @pytest.mark.parametrize("expand", ["xrootd", "local"])
-@pytest.mark.parametrize("nfiles,nevents,test_tree,empty",
-                        [(2, 302, False, True),
-                         (4, 302, False, False),
+@pytest.mark.parametrize("nfiles,nevents,empty",
+                        [(2, 302, True),
+                         (4, 302, False),
                         ])
-def test_prepare_file_list(dummy_file_dir, nfiles, nevents, test_tree, empty, expand):
+def test_prepare_file_list(dummy_file_dir, nfiles, nevents, empty, expand):
     tree = "events"
     files = os.path.join(dummy_file_dir, "*.root")
     file_list = fc_write.prepare_file_list(files, "data", "mc", tree_name=tree,
                                            expand_files=expand,
-                                           confirm_tree=test_tree,
+                                           confirm_tree=False,
                                            no_empty_files=empty)
 
     assert isinstance(file_list, dict)
@@ -77,5 +78,26 @@ def test_prepare_file_list(dummy_file_dir, nfiles, nevents, test_tree, empty, ex
     assert file_list["nfiles"] == nfiles
     assert file_list["nevents"] == nevents
 
-# def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd",
-#                       absolute_paths=True, no_empty_files=True, confirm_tree=True):
+@pytest.mark.parametrize("expand", ["xrootd", "local"])
+@pytest.mark.parametrize("empty", [True, False])
+def test_prepare_file_list(dummy_file_dir, empty, expand):
+    tree = "events"
+    files = os.path.join(dummy_file_dir, "*.root")
+    with pytest.raises(RuntimeError) as e:
+        file_list = fc_write.prepare_file_list(files, "data", "mc", tree_name=tree,
+                                               expand_files=expand,
+                                               confirm_tree=True,
+                                               no_empty_files=empty)
+    assert "'events' wasn't found" in str(e)
+
+
+def test_get_file_list_expander():
+    xrootd = fc_write.get_file_list_expander("xrootd")
+    assert xrootd is catalogues.XrootdExpander
+
+    local = fc_write.get_file_list_expander("local")
+    assert local is catalogues.LocalGlobExpander
+
+    with pytest.raises(RuntimeError) as e:
+        fc_write.get_file_list_expander("gobbledy gook")
+    assert "Unknown file expander" in str(e)
