@@ -61,9 +61,7 @@ def test_prepare_contents():
 
 @pytest.mark.parametrize("expand", ["xrootd", "local"])
 @pytest.mark.parametrize("nfiles,nevents,empty",
-                        [(2, 302, True),
-                         (4, 302, False),
-                        ])
+                         [(2, 302, True), (4, 302, False)])
 def test_prepare_file_list(dummy_file_dir, nfiles, nevents, empty, expand):
     tree = "events"
     files = os.path.join(dummy_file_dir, "*.root")
@@ -78,16 +76,17 @@ def test_prepare_file_list(dummy_file_dir, nfiles, nevents, empty, expand):
     assert file_list["nfiles"] == nfiles
     assert file_list["nevents"] == nevents
 
+
 @pytest.mark.parametrize("expand", ["xrootd", "local"])
 @pytest.mark.parametrize("empty", [True, False])
-def test_prepare_file_list(dummy_file_dir, empty, expand):
+def test_prepare_file_list_confirm_trees(dummy_file_dir, empty, expand):
     tree = "events"
     files = os.path.join(dummy_file_dir, "*.root")
     with pytest.raises(RuntimeError) as e:
-        file_list = fc_write.prepare_file_list(files, "data", "mc", tree_name=tree,
-                                               expand_files=expand,
-                                               confirm_tree=True,
-                                               no_empty_files=empty)
+        fc_write.prepare_file_list(files, "data", "mc", tree_name=tree,
+                                   expand_files=expand,
+                                   confirm_tree=True,
+                                   no_empty_files=empty)
     assert "'events' wasn't found" in str(e)
 
 
