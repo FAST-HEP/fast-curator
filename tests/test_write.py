@@ -26,3 +26,24 @@ def test_add_meta():
     with pytest.raises(RuntimeError) as e:
         fc_write.add_meta(dataset, [("one", "3/3")])
     assert "will override" in str(e)
+
+
+def test_prepare_contents():
+    datasets = [dict(name="foo", one=1, two=2, three="3", a=["ay", "ee", "eye"]),
+                dict(name="bar", one="1", two=2, three=3, a=["eye", "oh", "you"]),
+                dict(name="baz", one="1", two=2, three="3j", a=["oh"]),
+                ]
+    contents = fc_write.prepare_contents(datasets)
+
+    assert "defaults" in contents
+    assert "datasets" in contents
+    assert len(contents["defaults"]) == 2
+    assert contents["defaults"]["one"] == "1"
+    assert contents["defaults"]["two"] == 2
+    assert len(contents["datasets"]) == 3
+    assert all("two" not in d for d in contents["datasets"])
+    assert "one" not in contents["datasets"][1]
+    assert "one" not in contents["datasets"][2]
+    assert contents["datasets"][1]["name"] == "bar"
+    assert contents["datasets"][2]["name"] == "baz"
+    assert all("a" in d for d in contents["datasets"])
