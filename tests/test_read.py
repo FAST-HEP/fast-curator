@@ -2,6 +2,42 @@ import pytest
 import fast_curator.read as fc_read
 
 
+@pytest.fixture
+def yaml_config_1(tmpdir):
+    content = """
+    datasets:
+      - name: one
+        eventtype: mc
+    """
+    tmpfile = tmpdir / "curator_yaml_config_1.yml"
+    tmpfile.write(content)
+    return str(tmpfile)
+
+
+@pytest.fixture
+def yaml_config_2(yaml_config_1, tmpdir):
+    content = """
+    import:
+      - "{this_dir}/curator_yaml_config_1.yml"
+    datasets:
+      - name: two
+        eventtype: mc
+    """
+    tmpfile = tmpdir / "curator_yaml_config_2.yml"
+    tmpfile.write(content)
+    return str(tmpfile)
+
+
+def test_from_yaml_1(yaml_config_1):
+    datasets = fc_read.from_yaml(yaml_config_1)
+    assert len(datasets) == 1
+
+
+def test_from_yaml_2(yaml_config_2):
+    datasets = fc_read.from_yaml(yaml_config_2)
+    assert len(datasets) == 2
+
+
 def test__from_string():
     config = fc_read._from_string("dummy_data_1", {})
     assert len(config) == 1
