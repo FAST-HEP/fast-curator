@@ -28,6 +28,10 @@ def arg_parser_write():
     parser.add_argument("--no-empty-files", default=False, action="store_true",
                         help="Don't include files that contain no events"
                         )
+    parser.add_argument("--allow-missing-tree", dest="confirm_tree",
+                        action="store_false", default=True,
+                        help="Allow files that don't contain the named tree in"
+                        )
 
     def split_meta(arg):
         if "=" not in arg:
@@ -48,6 +52,7 @@ def main_write(args=None):
     dataset = write.prepare_file_list(files=args.files, dataset=args.dataset,
                                       expand_files=args.query_type,
                                       no_empty_files=args.no_empty_files,
+                                      confirm_tree=args.confirm_tree,
                                       eventtype=args.eventtype, tree_name=args.tree_name)
     write.add_meta(dataset, args.meta)
     for user_func in args.user:

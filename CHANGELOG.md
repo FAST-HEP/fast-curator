@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Generic interface for file path expansion, PR #20. [@benkrikler](https://github.com/benkrikler)
 - Add option to ignore empty files, issue #5. [@benkrikler](https://github.com/benkrikler)
+- Report files with missing trees, issue #16, PR #24. [@benkrikler](https://github.com/benkrikler)
 
 ### Changed
 - Switch README to restructured text and update setup.py, PR 23.
