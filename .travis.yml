@@ -22,3 +22,14 @@ jobs:
     - stage: test
       script: flake8 --max-line-length=120 fast_curator tests
       name: flake8
+
+deploy:
+  provider: pypi
+  user: fast-hep
+  distributions: "sdist bdist_wheel"
+  password:
+    secure: "vxFvtA/Bxm9D/f6Z4+XTfpZYMNtOBFayEkC9HAU2364pCCuhlfdNb4PP+coeCAo7jVD8fkJ6PUTyBHdiWITlCHPMdJU86rHj+Gsys8T9pFzZPLeiKOOw0hotrmd9IlsuNdz9DxIPhOEA/Ts7Y/2AStkZZXFDNllN0kKNc3WXFXDJY2y2CDsBkkEhZyNqxps42vokVnRhRP1UAMMWRp+wBUW8ghGIdvkFUB5Imh/YAMxSCguun89Gf4myQqPweEe9JhJXsH9qIDlBwUHHV7EYyg56qzdwlju82S9/m96PB0L1y8c8MXBd7VUgY5hwU3QWO4+lQGrz1ScUGy5975D/mfMxBqnrw5YbRwofJ/osWBPiAtb1LJXSLaBSF8SsJC443f0+emyhJwnpbo8nZLosqbtIDCvf4Igsr+40dKvhw/+TzzY6Eeiu0RjViAftUeBpUASmQ+tmLcFd4ys9OXJqKij7MsSaIuS6r52lX+qO/SM3p/EKicKCDIgoT0Bo2EbXpwKb3SHMsqoOfMykBX2tyt0m2AUHqkAzfTHv3wnLESOnF3QTZE+HaMWEtzdEAjPzdDnWLTu2RdYr26p+WkGcNkEkswdrZoKe7D7cmxEzA+/qnxBhON70dbDXX2dfQ/SQlWKZVCnCWIt/X+WyR8QXoy8YlIhd6pmKzhszNMoy6vQ="
+  on:
+    tags: true
+    repo: FAST-HEP/fast-curator
+    condition: "$TRAVIS_PYTHON_VERSION == 3.6 && $TRAVIS_TAG =~ ^v[0-9]+[.][0-9]+[.][0-9]+(-rc[0-9]+|[.]dev[0-9]+)?$"
