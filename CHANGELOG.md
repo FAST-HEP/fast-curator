@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [0.3.1] - 2019-09-28
+### Changed
+- Automate pypi deployment
+
 ## [0.3.0] - 2019-09-28
 ### Added
 - Generic interface for file path expansion, PR #20. [@benkrikler](https://github.com/benkrikler)
