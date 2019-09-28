@@ -1,5 +1,14 @@
+import os
 import pytest
 import fast_curator.write as fc_write
+
+
+@pytest.fixture
+def dummy_file_dir():
+    directory = os.path.dirname(__file__)
+    directory = os.path.join(directory, "dummy_files")
+    assert os.path.isdir(directory)
+    return directory
 
 
 def test_select_default():
@@ -47,3 +56,27 @@ def test_prepare_contents():
     assert contents["datasets"][1]["name"] == "bar"
     assert contents["datasets"][2]["name"] == "baz"
     assert all("a" in d for d in contents["datasets"])
+
+
+@pytest.mark.parametrize("expand", ["xrootd", "local"])
+@pytest.mark.parametrize("nfiles,nevents,test_tree,empty",
+                        [(2, 302, False, True),
+                         (4, 302, False, False),
+                        ])
+def test_prepare_file_list(dummy_file_dir, nfiles, nevents, test_tree, empty, expand):
+    tree = "events"
+    files = os.path.join(dummy_file_dir, "*.root")
+    file_list = fc_write.prepare_file_list(files, "data", "mc", tree_name=tree,
+                                           expand_files=expand,
+                                           confirm_tree=test_tree,
+                                           no_empty_files=empty)
+
+    print("BEK", file_list["files"])
+    assert isinstance(file_list, dict)
+    assert file_list["name"] == "data"
+    assert file_list["eventtype"] == "mc"
+    assert file_list["nfiles"] == nfiles
+    assert file_list["nevents"] == nevents
+
+# def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd",
+#                       absolute_paths=True, no_empty_files=True, confirm_tree=True):

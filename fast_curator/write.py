@@ -1,4 +1,5 @@
 from __future__ import print_function
+import six
 import itertools
 import operator
 import os
@@ -19,8 +20,10 @@ def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd
     Expands all globs in the file lists and creates a dataframe similar to those from a DAS query
     """
 
-    if not callable(expand_files):
+    if isinstance(expand_files, six.string_types):
         expand_files = get_file_list_expander(expand_files)
+    if isinstance(files, six.string_types):
+        files = [files]
     full_list = expand_files.expand_file_list(files)
     if absolute_paths:
         full_list = [os.path.realpath(f) if ':' not in f else f for f in full_list]
