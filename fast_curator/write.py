@@ -27,9 +27,9 @@ def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd
     full_list = expand_files.expand_file_list(files)
     if absolute_paths:
         full_list = [os.path.realpath(f) if ':' not in f else f for f in full_list]
-    full_list, numentries = expand_files.check_entries(full_list, tree_name,
-                                                       no_empty=no_empty_files,
-                                                       confirm_tree=confirm_tree)
+    full_list, numentries, branches = expand_files.check_files(full_list, tree_name,
+                                                               no_empty=no_empty_files,
+                                                               confirm_tree=confirm_tree)
 
     data = {}
     data["eventtype"] = eventtype
@@ -38,6 +38,8 @@ def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd
     data["nfiles"] = len(full_list)
     data["files"] = full_list
     data["tree"] = tree_name
+    if branches:
+        data["branches"] = branches
 
     return data
 

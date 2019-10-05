@@ -1,5 +1,5 @@
 import uproot
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 
 class XrootdExpander():
@@ -17,7 +17,7 @@ class XrootdExpander():
         return full_list
 
     @staticmethod
-    def check_entries(*args, **kwargs):
+    def check_files(*args, **kwargs):
         return check_entries_uproot(*args, **kwargs)
 
 
@@ -36,11 +36,11 @@ class LocalGlobExpander():
         return full_list
 
     @staticmethod
-    def check_entries(*args, **kwargs):
+    def check_files(*args, **kwargs):
         return check_entries_uproot(*args, **kwargs)
 
 
-def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True):
+def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_branches=False):
     no_empty = no_empty or confirm_tree
     if not isinstance(tree_names, (tuple, list)):
         tree_names = [tree_names]
@@ -64,6 +64,12 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True):
             msg = "Missing at least one tree (%s) for %d file(s): %s"
             msg = msg % (", ".join(missing_trees), len(missing_trees), ", ".join(files))
             raise RuntimeError(msg)
+
+    branches = {}
+    if list_branches:
+        for tree in tree_names:
+            all_branches = (uproot.open(f)[tree].keys(recursive=True) for f in files)
+            branches[tree] = dict(Counter(sum(all_branches, [])))
 
     if len(n_entries) == 1:
         n_entries = list(n_entries.values())[0]
