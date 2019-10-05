@@ -1,3 +1,4 @@
+import os
 import uproot
 from collections import defaultdict, Counter
 
@@ -9,9 +10,11 @@ class XrootdExpander():
     from .. import xrootd_glob
 
     @staticmethod
-    def expand_file_list(files):
+    def expand_file_list(files, prefix=None):
         full_list = []
         for name in files:
+            if prefix and not os.path.isabs(name):
+                name = os.path.join(prefix, name)
             expanded = XrootdExpander.xrootd_glob.glob(name)
             full_list += map(str, expanded)
         return full_list
@@ -28,7 +31,7 @@ class LocalGlobExpander():
     import glob
 
     @staticmethod
-    def expand_file_list(files):
+    def expand_file_list(files, prefix=None):
         full_list = []
         for name in files:
             expanded = LocalGlobExpander.glob.glob(name)
