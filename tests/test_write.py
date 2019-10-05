@@ -87,7 +87,7 @@ def test_prepare_file_list_confirm_trees(dummy_file_dir, empty, expand):
                                    expand_files=expand,
                                    confirm_tree=True,
                                    no_empty_files=empty)
-    assert "'events' wasn't found" in str(e)
+    assert "Missing" in str(e) and "events" in str(e)
 
 
 def test_get_file_list_expander():

@@ -15,7 +15,7 @@ def arg_parser_write():
                         help="Specify if this dataset contains simulated data")
     parser.add_argument("--data", dest="eventtype", action="store_const", const="data",
                         help="Specify if this dataset contains real data")
-    parser.add_argument("-t", "--tree-name", default="Events", type=str,
+    parser.add_argument("-t", "--tree-name", default=[], type=str, action="append",
                         help="Provide the name of the tree in the input files to calculate number of events, etc")
     parser.add_argument("-u", "--user", default=[], type=str, action="append",
                         help="Add a user function to extend the dataset dictionary,"
@@ -48,6 +48,8 @@ def arg_parser_write():
 
 def main_write(args=None):
     args = arg_parser_write().parse_args(args=args)
+    if not args.tree_name:
+        args.tree_name = ["Events"]
 
     dataset = write.prepare_file_list(files=args.files, dataset=args.dataset,
                                       expand_files=args.query_type,
