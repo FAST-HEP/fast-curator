@@ -68,6 +68,7 @@ def test_prepare_file_list(dummy_file_dir, nfiles, nevents, empty, expand):
     file_list = fc_write.prepare_file_list(files, "data", "mc", tree_name=tree,
                                            expand_files=expand,
                                            confirm_tree=False,
+                                           include_branches=True,
                                            no_empty_files=empty)
 
     assert isinstance(file_list, dict)
@@ -75,6 +76,9 @@ def test_prepare_file_list(dummy_file_dir, nfiles, nevents, empty, expand):
     assert file_list["eventtype"] == "mc"
     assert file_list["nfiles"] == nfiles
     assert file_list["nevents"] == nevents
+    assert len(file_list["branches"]) == 1
+    assert len(file_list["branches"]["events"]) == 1
+    assert file_list["branches"]["events"]["ev"] == 1
 
 
 @pytest.mark.parametrize("expand", ["xrootd", "local"])

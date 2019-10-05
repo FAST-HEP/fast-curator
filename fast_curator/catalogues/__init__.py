@@ -68,7 +68,8 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_br
     branches = {}
     if list_branches:
         for tree in tree_names:
-            all_branches = (uproot.open(f)[tree].keys(recursive=True) for f in files)
+            open_files = (uproot.open(f) for f in files)
+            all_branches = (f[tree].keys(recursive=True) for f in open_files if tree in f)
             branches[tree] = dict(Counter(sum(all_branches, [])))
 
     if len(n_entries) == 1:
