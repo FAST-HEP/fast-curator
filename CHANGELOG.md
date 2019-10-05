@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Support for handling mulitple input trees in each file, PR #28
 
 ### Changed
 
