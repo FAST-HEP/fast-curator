@@ -11,7 +11,7 @@ class XrootdExpander():
 
     @staticmethod
     def expand_file_list(files, prefix=None):
-        glob = glob=XrootdExpander.xrootd_glob.glob
+        glob = XrootdExpander.xrootd_glob.glob
         return expand_file_list_generic(files, prefix, glob=glob)
 
     @staticmethod
