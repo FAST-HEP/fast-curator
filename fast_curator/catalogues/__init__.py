@@ -1,3 +1,4 @@
+import os
 import uproot
 from collections import defaultdict, Counter
 
@@ -9,12 +10,9 @@ class XrootdExpander():
     from .. import xrootd_glob
 
     @staticmethod
-    def expand_file_list(files):
-        full_list = []
-        for name in files:
-            expanded = XrootdExpander.xrootd_glob.glob(name)
-            full_list += map(str, expanded)
-        return full_list
+    def expand_file_list(files, prefix=None):
+        glob = XrootdExpander.xrootd_glob.glob
+        return expand_file_list_generic(files, prefix, glob=glob)
 
     @staticmethod
     def check_files(*args, **kwargs):
@@ -28,16 +26,26 @@ class LocalGlobExpander():
     import glob
 
     @staticmethod
-    def expand_file_list(files):
-        full_list = []
-        for name in files:
-            expanded = LocalGlobExpander.glob.glob(name)
-            full_list += map(str, expanded)
-        return full_list
+    def expand_file_list(files, prefix=None):
+        glob = LocalGlobExpander.glob.glob
+        return expand_file_list_generic(files, prefix, glob=glob)
 
     @staticmethod
     def check_files(*args, **kwargs):
         return check_entries_uproot(*args, **kwargs)
+
+
+def expand_file_list_generic(files, prefix, glob):
+    full_list = []
+    for name in files:
+        if not os.path.isabs(name):
+            if prefix:
+                name = os.path.join(prefix, name)
+            else:
+                name = os.path.relpath(name)
+        expanded = glob(name)
+        full_list += map(str, expanded)
+    return full_list
 
 
 def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_branches=False):

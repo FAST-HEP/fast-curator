@@ -32,6 +32,8 @@ def arg_parser_write():
                         action="store_false", default=True,
                         help="Allow files that don't contain the named tree in"
                         )
+    parser.add_argument("-p", "--prefix", default=None,
+                        help="Provide a common prefix to files, useful for supporting multiple sites")
 
     def split_meta(arg):
         if "=" not in arg:
@@ -55,7 +57,9 @@ def main_write(args=None):
                                       expand_files=args.query_type,
                                       no_empty_files=args.no_empty_files,
                                       confirm_tree=args.confirm_tree,
-                                      eventtype=args.eventtype, tree_name=args.tree_name)
+                                      prefix=args.prefix,
+                                      eventtype=args.eventtype,
+                                      tree_name=args.tree_name)
     write.add_meta(dataset, args.meta)
     for user_func in args.user:
         write.process_user_function(dataset, user_func)
@@ -71,6 +75,8 @@ def arg_parser_check():
                         type=str, help="Name of output file list to expand things to")
     parser.add_argument("-f", "--fields", default=["nfiles"], type=lambda x: x.split(","),
                         help="Comma-separated list of fields to dump for each dataset ")
+    parser.add_argument("-p", "--prefix", default=None,
+                        help="Choose one of the file prefixes to use")
     return parser
 
 
@@ -79,7 +85,7 @@ def main_check(args=None):
 
     datasets = []
     for infile in args.files:
-        datasets += read.from_yaml(infile)
+        datasets += read.from_yaml(infile, selected_prefix=args.prefix)
 
     for dataset in datasets:
         if len(dataset.files) != dataset.nfiles:
@@ -94,4 +100,4 @@ def main_check(args=None):
 
     if args.output:
         datasets = write.prepare_contents(datasets)
-        write.write_yaml(datasets, args.output, append=False)
+        write.write_yaml(datasets, args.output, append=False, prefix=args.prefix)

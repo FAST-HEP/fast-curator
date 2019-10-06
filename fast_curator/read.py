@@ -33,19 +33,23 @@ def _load_yaml(path):
     return datasets_dict
 
 
-def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
+def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix,
+              selected_prefix=None, expand_prefix=True):
     datasets_dict = _load_yaml(path)
     this_dir = os.path.dirname(os.path.abspath(path))
     return get_datasets(datasets_dict, defaults, this_dir=this_dir,
+                        selected_prefix=selected_prefix,
+                        expand_prefix=expand_prefix,
                         find_associates=associate_by_ext_suffix)
 
 
 def get_datasets(datasets_dict, defaults={},
-                 find_associates=associate_by_ext_suffix, already_imported=None, this_dir=None):
+                 find_associates=associate_by_ext_suffix, already_imported=None,
+                 this_dir=None, selected_prefix=None, expand_prefix=True):
     datasets = []
     defaults.update(datasets_dict.get("defaults", {}))
     if "import" not in datasets_dict and "datasets" not in datasets_dict:
-        raise RuntimeError("Neither 'datasets' nor 'import' were specified in file list")
+        raise RuntimeError("Neither 'datasets' nor 'import' were specified in config")
 
     if already_imported is None:
         already_imported = set()
@@ -60,12 +64,16 @@ def get_datasets(datasets_dict, defaults={},
                                  find_associates=find_associates, already_imported=already_imported)
     for dataset in datasets_dict.get("datasets", []):
         if isinstance(dataset, six.string_types):
-            dataset_kwargs = _from_string(dataset, defaults)
+            cfg = _from_string(dataset, defaults)
         elif isinstance(dataset, dict):
-            dataset_kwargs = _from_dict(dataset, defaults)
+            cfg = _from_dict(dataset, defaults, selected_prefix)
         else:
             raise TypeError("{} not a string or dict".format(dataset))
-        datasets.append(Dataset(**dataset_kwargs))
+        if expand_prefix:
+            prefix = cfg.get("prefix", None)
+            files = apply_prefix(prefix, cfg["files"], selected_prefix, cfg["name"])
+            cfg["files"] = files
+        datasets.append(Dataset(**cfg))
 
     # Associate samples
     find_associates(datasets)
@@ -79,10 +87,36 @@ def _from_string(dataset, default):
     return cfg
 
 
-def _from_dict(dataset, default):
+def _from_dict(dataset, default, selected_prefix=None):
     cfg = default.copy()
     cfg.update(dataset)
     if "name" not in cfg:
         raise RuntimeError(
             "Dataset provided as dict, without key-value pair for 'name'")
     return cfg
+
+
+def apply_prefix(prefix, files, selected_prefix, dataset):
+    if not prefix:
+        return files
+
+    if isinstance(prefix, list):
+        if not all((isinstance(p, dict) and len(p) == 1 for p in prefix)):
+            raise ValueError("'prefix' is a list, but not all elements are single-length dicts")
+        prefix = [tuple(p.items())[0] for p in prefix]
+        if selected_prefix:
+            matched = [v for p, v in prefix if p == selected_prefix]
+            if len(matched) > 1:
+                msg = "Prefix '%s' is defined %d times, not sure which to use"
+                raise ValueError(msg % (selected_prefix, len(matched)))
+            if not matched:
+                msg = "Prefix '%s' is not defined for dataset '%s'"
+                raise ValueError(msg % (selected_prefix, dataset))
+            prefix = matched[0]
+        else:
+            prefix = prefix[0][1]
+    elif not isinstance(prefix, six.string_types):
+        msg = "'prefix' for dataset '%s' is type '%s'. Need a string or a list of single-length dicts"
+        raise ValueError(msg % (dataset, type(prefix)))
+
+    return [f.format(prefix=prefix) for f in files]

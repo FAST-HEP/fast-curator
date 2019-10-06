@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Support for handling mulitple input trees in each file, PR #28
-
 ### Changed
-
 ### Removed
+
+## [0.4.0] - 2019-10-06
+### Added
+- Support for handling mulitple input trees in each file, PR #28
+- Support for file prefix selection, PR #29
 
 ## [0.3.2] - 2019-09-29
 ### Changed
