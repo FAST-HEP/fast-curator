@@ -4,10 +4,14 @@ import fast_curator.write as fc_write
 import fast_curator.catalogues as catalogues
 
 
-@pytest.fixture
-def dummy_file_dir():
+@pytest.fixture(params=["relpath", "abspath"])
+def dummy_file_dir(request):
+    relpath = request.param == "relpath"
     directory = os.path.dirname(__file__)
     directory = os.path.join(directory, "dummy_files")
+    if relpath:
+        common = os.path.commonprefix([directory, os.getcwd()])
+        directory = os.path.relpath(directory, common)
     assert os.path.isdir(directory)
     return directory
 
@@ -60,12 +64,14 @@ def test_prepare_contents():
 
 
 @pytest.mark.parametrize("expand", ["xrootd", "local"])
+@pytest.mark.parametrize("prefix", [None, os.getcwd()])
 @pytest.mark.parametrize("nfiles,nevents,empty",
                          [(2, 302, True), (4, 302, False)])
-def test_prepare_file_list(dummy_file_dir, nfiles, nevents, empty, expand):
+def test_prepare_file_list(dummy_file_dir, nfiles, nevents, empty, expand, prefix):
     tree = "events"
     files = os.path.join(dummy_file_dir, "*.root")
     file_list = fc_write.prepare_file_list(files, "data", "mc", tree_name=tree,
+                                           prefix=prefix,
                                            expand_files=expand,
                                            confirm_tree=False,
                                            include_branches=True,
@@ -79,6 +85,7 @@ def test_prepare_file_list(dummy_file_dir, nfiles, nevents, empty, expand):
     assert len(file_list["branches"]) == 1
     assert len(file_list["branches"]["events"]) == 1
     assert file_list["branches"]["events"][b"ev"] == 1
+    assert any("events_202" in f for f in file_list["files"])
 
 
 @pytest.mark.parametrize("expand", ["xrootd", "local"])
