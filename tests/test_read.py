@@ -75,6 +75,11 @@ def test_apply_prefix():
     files = ["{prefix}one", "{prefix}two/two", "three"]
     dataset = "test_apply_prefix"
 
+    prefix = None
+    result = fc_read.apply_prefix(prefix, files, None, dataset)
+    assert len(result) == 3
+    assert result == files
+
     prefix = "testing/"
     result = fc_read.apply_prefix(prefix, files, None, dataset)
     assert len(result) == 3
@@ -108,3 +113,8 @@ def test_apply_prefix():
     with pytest.raises(ValueError) as e:
         fc_read.apply_prefix(prefix, files, None, dataset)
     assert "string or a list" in str(e)
+
+    prefix = [{"default": "another_test/"}, {"default": "yet_another_test/"}]
+    with pytest.raises(ValueError) as e:
+        fc_read.apply_prefix(prefix, files, "default", dataset)
+    assert "defined 2 times" in str(e)
