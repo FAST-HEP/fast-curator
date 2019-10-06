@@ -8,6 +8,7 @@ def yaml_config_1(tmpdir):
     datasets:
       - name: one
         eventtype: mc
+        files: ["{prefix}one", "two"]
     """
     tmpfile = tmpdir / "curator_yaml_config_1.yml"
     tmpfile.write(content)
@@ -22,6 +23,7 @@ def yaml_config_2(yaml_config_1, tmpdir):
     datasets:
       - name: two
         eventtype: mc
+        files: ["one", "two"]
     """
     tmpfile = tmpdir / "curator_yaml_config_2.yml"
     tmpfile.write(content)

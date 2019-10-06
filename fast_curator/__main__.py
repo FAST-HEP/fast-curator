@@ -35,7 +35,6 @@ def arg_parser_write():
     parser.add_argument("-p", "--prefix", default=None,
                         help="Provide a common prefix to files, useful for supporting multiple sites")
 
-
     def split_meta(arg):
         if "=" not in arg:
             msg = "option not of the form 'key=value'"
