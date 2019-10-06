@@ -40,7 +40,7 @@ def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd
     data["nevents"] = numentries
     data["nfiles"] = len(full_list)
     data["files"] = full_list
-    data["tree"] = tree_name
+    data["tree"] = tree_name[0] if len(tree_name) == 1 else tree_name
     if branches:
         data["branches"] = branches
 
