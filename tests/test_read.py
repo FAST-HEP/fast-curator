@@ -9,6 +9,7 @@ def yaml_config_1(tmpdir):
       - name: one
         eventtype: mc
         files: ["{prefix}one", "two"]
+        prefix: SOME_prefix/
     """
     tmpfile = tmpdir / "curator_yaml_config_1.yml"
     tmpfile.write(content)
@@ -23,7 +24,10 @@ def yaml_config_2(yaml_config_1, tmpdir):
     datasets:
       - name: two
         eventtype: mc
-        files: ["one", "two"]
+        files: ["one", "two", "{prefix}three"]
+        prefix:
+          - default: SOME_prefix/
+          - second: another_one_PREFIX/
     """
     tmpfile = tmpdir / "curator_yaml_config_2.yml"
     tmpfile.write(content)
@@ -66,8 +70,41 @@ def test__from_dict():
     assert config["two"] == "2"
     assert config["three"] == 333
 
-# def associate_by_ext_suffix(datasets):
-# def from_yaml(path, defaults={}, find_associates=associate_by_ext_suffix):
-# def get_datasets(datasets_dict, defaults={},
-# def _from_string(dataset, default):
-# def _from_dict(dataset, default):
+
+def test_apply_prefix():
+    files = ["{prefix}one", "{prefix}two/two", "three"]
+    dataset = "test_apply_prefix"
+
+    prefix = "testing/"
+    result = fc_read.apply_prefix(prefix, files, None, dataset)
+    assert len(result) == 3
+    assert result[0] == "testing/one"
+    assert result[1] == "testing/two/two"
+    assert result[2] == "three"
+
+    prefix = [{"default": "another_test/"}, {"second": "yet_another_test/"}]
+    result = fc_read.apply_prefix(prefix, files, None, dataset)
+    assert len(result) == 3
+    assert result[0] == "another_test/one"
+    assert result[1] == "another_test/two/two"
+    assert result[2] == "three"
+
+    result = fc_read.apply_prefix(prefix, files, "second", dataset)
+    assert len(result) == 3
+    assert result[0] == "yet_another_test/one"
+    assert result[1] == "yet_another_test/two/two"
+    assert result[2] == "three"
+
+    with pytest.raises(ValueError) as e:
+        fc_read.apply_prefix(prefix, files, "invalid", dataset)
+    assert "invalid" in str(e) and "not defined" in str(e)
+
+    prefix = [dict(foo=1, bar=3)]
+    with pytest.raises(ValueError) as e:
+        fc_read.apply_prefix(prefix, files, None, dataset)
+    assert "single-length dict" in str(e)
+
+    prefix = dict(foo=1, bar=3)
+    with pytest.raises(ValueError) as e:
+        fc_read.apply_prefix(prefix, files, None, dataset)
+    assert "string or a list" in str(e)

@@ -117,6 +117,6 @@ def apply_prefix(prefix, files, selected_prefix, dataset):
             prefix = prefix[0][1]
     elif not isinstance(prefix, six.string_types):
         msg = "'prefix' for dataset '%s' is type '%s'. Need a string or a list of single-length dicts"
-        raise ValueError(msg % dataset)
+        raise ValueError(msg % (dataset, type(prefix)))
 
     return [f.format(prefix=prefix) for f in files]
