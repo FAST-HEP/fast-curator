@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed
 
+## [0.4.1] - 2019-10-06
+### Changed
+- Save tree_name as single string if only one tree included, PR #30
+
 ## [0.4.0] - 2019-10-06
 ### Added
 - Support for handling mulitple input trees in each file, PR #28
