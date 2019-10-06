@@ -3,6 +3,7 @@ from . import write
 from . import read
 from .version import __version__
 
+
 def arg_parser_write():
     import argparse
     parser = argparse.ArgumentParser()
@@ -34,7 +35,6 @@ def arg_parser_write():
                         )
     parser.add_argument("-p", "--prefix", default=None,
                         help="Provide a common prefix to files, useful for supporting multiple sites")
-
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 
     def split_meta(arg):
