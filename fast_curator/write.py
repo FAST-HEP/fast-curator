@@ -20,9 +20,6 @@ def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd
     """
     Expands all globs in the file lists and creates a dataframe similar to those from a DAS query
     """
-    if prefix is None:
-        prefix = os.getcwd()
-
     if isinstance(expand_files, six.string_types):
         expand_files = get_file_list_expander(expand_files)
     if isinstance(files, six.string_types):
@@ -33,10 +30,11 @@ def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd
                                                                no_empty=no_empty_files,
                                                                list_branches=include_branches,
                                                                confirm_tree=confirm_tree)
-    full_list = [path[len(prefix):] if path.startswith(prefix) else path for path in full_list]
 
     data = {}
-    data["prefix"] = prefix
+    if prefix:
+        full_list = ["{prefix}" + path[len(prefix):] if path.startswith(prefix) else path for path in full_list]
+        data["prefix"] = [{"default": prefix}]
     data["eventtype"] = eventtype
     data["name"] = dataset
     data["nevents"] = numentries
@@ -104,7 +102,7 @@ def prepare_contents(datasets):
 def write_yaml(dataset, out_file, append=True):
     import yaml
     if os.path.exists(out_file) and append:
-        datasets = read.from_yaml(out_file)
+        datasets = read.from_yaml(out_file, expand_prefix=False)
         datasets.append(dataset)
         contents = prepare_contents(datasets)
     else:

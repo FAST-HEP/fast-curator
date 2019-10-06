@@ -13,8 +13,11 @@ class XrootdExpander():
     def expand_file_list(files, prefix=None):
         full_list = []
         for name in files:
-            if prefix and not os.path.isabs(name):
-                name = os.path.join(prefix, name)
+            if not os.path.isabs(name):
+                if prefix:
+                    name = os.path.join(prefix, name)
+                else:
+                    name = os.path.relpath(name)
             expanded = XrootdExpander.xrootd_glob.glob(name)
             full_list += map(str, expanded)
         return full_list
