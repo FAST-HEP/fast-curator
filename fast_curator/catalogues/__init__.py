@@ -58,6 +58,8 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_br
     else:
         n_entries = {tree: 0 for tree in tree_names}
         missing_trees = defaultdict(list)
+        print(files)
+        print("\n\n\n")
         for f in files:
             print(f)
             if not os.access(f, os.R_OK):
