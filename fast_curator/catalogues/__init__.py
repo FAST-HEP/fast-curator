@@ -58,7 +58,7 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_br
     print(len(files))
     i = 0
     j = 0
-    files_copy = files
+    files_copy = files.copy()
     for f in files_copy:
         i += 1
         if not os.access(f, os.R_OK) or not os.access(f, os.W_OK):
