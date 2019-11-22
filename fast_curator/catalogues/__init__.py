@@ -57,7 +57,7 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_br
     print("\n\n\n")
     for f in files:
             print(f)
-            if not os.access(f, os.R_OK):
+            if not os.access(f, os.R_OK) or not os.access(f, os.W_OK):
                 print("unreadable {0}".format(f))
                 files.remove(f)
 
