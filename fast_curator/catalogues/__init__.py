@@ -60,9 +60,9 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_br
     j = 0
     for f in files:
         i += 1
-            if not os.access(f, os.R_OK) or not os.access(f, os.W_OK):
-                files.remove(f)
-                j += 1
+        if not os.access(f, os.R_OK) or not os.access(f, os.W_OK):
+            files.remove(f)
+            j += 1
     print(i)
     print(j)
 
