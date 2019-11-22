@@ -10,7 +10,7 @@ def arg_parser_write():
     parser.add_argument("files", nargs='*')
     parser.add_argument("-d", "--dataset", required=True,
                         help="Which dataset to associate these files to")
-    parser.add_argument("-o", "--output", default="file_list.txt",
+    parser.add_argument("-o", "--output", default="file_list.yml",
                         type=str, help="Name of output file list")
     parser.add_argument("--mc", dest="eventtype", action="store_const", const="mc", default=None,
                         help="Specify if this dataset contains simulated data")
