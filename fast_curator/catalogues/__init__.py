@@ -55,17 +55,17 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_br
 
     print(files)
     print("\n\n\n")
+    for f in files:
+            print(f)
+            if not os.access(f, os.R_OK):
+                print("unreadable {0}".format(f))
+                files.remove(f)
 
     if not no_empty:
         n_entries = {tree: uproot.numentries(files, tree) for tree in tree_names}
     else:
         n_entries = {tree: 0 for tree in tree_names}
         missing_trees = defaultdict(list)
-        for f in files:
-            print(f)
-            if not os.access(f, os.R_OK):
-                print("unreadable {0}".format(f))
-                files.remove(f)
         for tree in tree_names:
             totals = uproot.numentries(files, tree, total=False)
             for name, entries in totals.items():
