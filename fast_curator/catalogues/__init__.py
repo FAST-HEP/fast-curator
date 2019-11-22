@@ -53,20 +53,10 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_br
     if not isinstance(tree_names, (tuple, list)):
         tree_names = [tree_names]
 
-    print(files)
-    print("\n\n\n")
-    print(len(files))
-    i = 0
-    j = 0
     files_copy = files.copy()
     for f in files_copy:
-        i += 1
-        if not os.access(f, os.R_OK) or not os.access(f, os.W_OK):
+        if not os.access(f, os.R_OK):
             files.remove(f)
-            j += 1
-    print(i)
-    print(j)
-    print(len(files))
 
     if not no_empty:
         n_entries = {tree: uproot.numentries(files, tree) for tree in tree_names}
