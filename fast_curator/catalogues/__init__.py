@@ -1,6 +1,7 @@
 import os
 import uproot
 from collections import defaultdict, Counter
+import numpy as np
 
 
 class XrootdExpander():
@@ -55,7 +56,7 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_br
 
     print(files)
     print("\n\n\n")
-    print(files.size())
+    print(np.size(files))
     i = 0
     j = 0
     for f in files:
