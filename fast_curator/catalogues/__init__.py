@@ -66,6 +66,7 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_br
             j += 1
     print(i)
     print(j)
+    print(np.size(files))
 
     if not no_empty:
         n_entries = {tree: uproot.numentries(files, tree) for tree in tree_names}
