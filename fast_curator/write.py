@@ -70,6 +70,7 @@ def prepare_contents(datasets):
     # build the default properties
     values = defaultdict(list)
     for data in datasets:
+        print(data)
         for k, v in data.items():
             values[k].append(v)
 
