@@ -117,6 +117,9 @@ def write_yaml(dataset, out_file, append=True, no_defaults_in_output=False):
     class MyDumper(yaml.Dumper):
         def increase_indent(self, flow=False, indentless=False):
             return super(MyDumper, self).increase_indent(flow, False)
+        # disable aliases and anchors, see https://github.com/yaml/pyyaml/issues/103
+        def ignore_aliases(self, data):
+            return True
 
     yaml_contents = yaml.dump(
         contents, Dumper=MyDumper, default_flow_style=False)
