@@ -60,12 +60,16 @@ def select_default(values):
     return most_common
 
 
-def prepare_contents(datasets):
+def prepare_contents(datasets, no_defaults_in_output=False):
     datasets = [vars(data) if isinstance(data, read.Dataset)
                 else data for data in datasets]
     for d in datasets:
         if "associates" in d:
             del d["associates"]
+
+    if no_defaults_in_output:
+        # do not group common settings together in default block
+        return dict(datasets=datasets)
 
     # build the default properties
     values = defaultdict(list)
@@ -99,12 +103,12 @@ def prepare_contents(datasets):
     return contents
 
 
-def write_yaml(dataset, out_file, append=True):
+def write_yaml(dataset, out_file, append=True, no_defaults_in_output=False):
     import yaml
     if os.path.exists(out_file) and append:
         datasets = read.from_yaml(out_file, expand_prefix=False)
         datasets.append(dataset)
-        contents = prepare_contents(datasets)
+        contents = prepare_contents(datasets, no_defaults_in_output=no_defaults_in_output)
     else:
         contents = {}
         contents["datasets"] = [dataset]
