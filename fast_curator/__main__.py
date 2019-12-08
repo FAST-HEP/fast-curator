@@ -35,6 +35,10 @@ def arg_parser_write():
                         )
     parser.add_argument("-p", "--prefix", default=None,
                         help="Provide a common prefix to files, useful for supporting multiple sites")
+    parser.add_argument("--no-defaults-in-output", dest="no_defaults_in_output",
+                        action="store_true", default=False,
+                        help="Explicitly list all settings for each dataset in output"
+                             " file instead of grouping them in default block")
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 
     def split_meta(arg):
@@ -66,7 +70,7 @@ def main_write(args=None):
     for user_func in args.user:
         write.process_user_function(dataset, user_func)
 
-    write.write_yaml(dataset, args.output)
+    write.write_yaml(dataset, args.output, no_defaults_in_output=args.no_defaults_in_output)
 
 
 def arg_parser_check():
