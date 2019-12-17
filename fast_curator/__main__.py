@@ -33,6 +33,9 @@ def arg_parser_write():
                         action="store_false", default=True,
                         help="Allow files that don't contain the named tree in"
                         )
+    parser.add_argument("--ignore-inaccessible", dest="ignore_inaccessible",
+                        default=False,
+                        help="Don't include files that can't be opened")
     parser.add_argument("-p", "--prefix", default=None,
                         help="Provide a common prefix to files, useful for supporting multiple sites")
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
@@ -59,6 +62,7 @@ def main_write(args=None):
                                       expand_files=args.query_type,
                                       no_empty_files=args.no_empty_files,
                                       confirm_tree=args.confirm_tree,
+                                      ignore_inaccessible=args.ignore_inaccessible,
                                       prefix=args.prefix,
                                       eventtype=args.eventtype,
                                       tree_name=args.tree_name)

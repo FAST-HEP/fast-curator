@@ -48,16 +48,17 @@ def expand_file_list_generic(files, prefix, glob):
     return full_list
 
 
-def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_branches=False):
+def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_branches=False, ignore_inaccessible=False):
     no_empty = no_empty or confirm_tree
     if not isinstance(tree_names, (tuple, list)):
         tree_names = [tree_names]
 
-    if len(files) > 0:
-        files_copy = files.copy()
-        for f in files_copy:
-            if not os.access(f, os.R_OK):
-                files.remove(f)
+    if ignore_inaccessible:
+        if len(files) > 0:
+            files_copy = files.copy()
+            for f in files_copy:
+                if not os.access(f, os.R_OK):
+                    files.remove(f)
 
     if not no_empty:
         n_entries = {tree: uproot.numentries(files, tree) for tree in tree_names}
