@@ -16,6 +16,7 @@ __all__ = ["known_expanders", "prepare_file_list", "write_yaml",
 
 def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd",
                       prefix=None, no_empty_files=True, confirm_tree=True,
+                      ignore_inaccessible=False,
                       include_branches=False):
     """
     Expands all globs in the file lists and creates a dataframe similar to those from a DAS query
@@ -29,7 +30,8 @@ def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd
     full_list, numentries, branches = expand_files.check_files(full_list, tree_name,
                                                                no_empty=no_empty_files,
                                                                list_branches=include_branches,
-                                                               confirm_tree=confirm_tree)
+                                                               confirm_tree=confirm_tree,
+                                                               ignore_inaccessible=ignore_inaccessible)
 
     data = {}
     if prefix:
