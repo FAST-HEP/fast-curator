@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Support for handling files which can't be opened PR #36 [@seriksen](https://github.com/seriksen)
 ### Changed
 ### Removed
+
+## [0.5.0] - 2020-01-27
+### Added
+- Support for handling files which can't be opened PR #36 [@seriksen](https://github.com/seriksen)
 
 ## [0.4.1] - 2019-10-06
 ### Changed
