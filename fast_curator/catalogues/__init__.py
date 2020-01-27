@@ -55,11 +55,7 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_br
         tree_names = [tree_names]
 
     if ignore_inaccessible:
-        if len(files) > 0:
-            files_copy = files.copy()
-            for f in files_copy:
-                if not os.access(f, os.R_OK):
-                    files.remove(f)
+        files = [f for f in files if os.access(f, os.R_OK)]
 
     if not no_empty:
         n_entries = {tree: uproot.numentries(files, tree) for tree in tree_names}
