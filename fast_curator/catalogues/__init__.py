@@ -1,7 +1,12 @@
 import os
+import sys
 import uproot
 from collections import defaultdict, Counter
 from functools import partial
+if sys.version[0] > '2':
+    from urllib.parse import urlparse
+else:
+    from urlparse import urlparse
 
 
 class XrootdExpander():
@@ -38,7 +43,8 @@ class LocalGlobExpander():
 def expand_file_list_generic(files, prefix, glob):
     full_list = []
     for name in files:
-        if not os.path.isabs(name):
+        scheme = urlparse(name).scheme
+        if not scheme and not os.path.isabs(name):
             if prefix:
                 name = os.path.join(prefix, name)
             else:
