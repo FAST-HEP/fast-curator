@@ -5,3 +5,4 @@ pytest==4.5.0
 pytest-cov==2.7.1
 pytest-runner==4.4
 codecov==2.0.15
+xrootd>=4.10.0

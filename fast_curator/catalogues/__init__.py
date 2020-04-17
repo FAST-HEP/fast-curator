@@ -1,18 +1,23 @@
 import os
+import sys
 import uproot
 from collections import defaultdict, Counter
+from functools import partial
+if sys.version[0] > '2':
+    from urllib.parse import urlparse
+else:
+    from urlparse import urlparse
 
 
 class XrootdExpander():
     """
     Expand wild-carded file paths, including with xrootd-served files
     """
-    from .. import xrootd_glob
-
     @staticmethod
     def expand_file_list(files, prefix=None):
-        glob = XrootdExpander.xrootd_glob.glob
-        return expand_file_list_generic(files, prefix, glob=glob)
+        from XRootD.client.glob_funcs import glob
+        return expand_file_list_generic(files, prefix,
+                                        glob=partial(glob, raise_error=True))
 
     @staticmethod
     def check_files(*args, **kwargs):
@@ -38,7 +43,8 @@ class LocalGlobExpander():
 def expand_file_list_generic(files, prefix, glob):
     full_list = []
     for name in files:
-        if not os.path.isabs(name):
+        scheme = urlparse(name).scheme
+        if not scheme and not os.path.isabs(name):
             if prefix:
                 name = os.path.join(prefix, name)
             else:
