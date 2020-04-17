@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.0] - 2020-04-17
 ### Changed
-- Use Xrootd's implementation of xrootd_glob not our own version
+- Use Xrootd's implementation of xrootd_glob not our own version PR #43 [@benkrikler](https://github.com/benkrikler)
 
 ## [0.5.0] - 2020-01-27
 ### Added
