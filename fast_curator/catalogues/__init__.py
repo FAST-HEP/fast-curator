@@ -1,6 +1,7 @@
 import os
 import uproot
 from collections import defaultdict, Counter
+from functools import partial
 
 
 class XrootdExpander():
@@ -10,7 +11,8 @@ class XrootdExpander():
     @staticmethod
     def expand_file_list(files, prefix=None):
         from XRootD.client.glob_funcs import glob
-        return expand_file_list_generic(files, prefix, glob=glob)
+        return expand_file_list_generic(files, prefix,
+                                        glob=partial(glob, raise_error=True))
 
     @staticmethod
     def check_files(*args, **kwargs):
