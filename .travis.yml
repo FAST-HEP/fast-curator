@@ -13,16 +13,16 @@ install:
   # version is the same.
   - if [[ "$TRAVIS_PYTHON_VERSION" =~ 3.[678]* ]]; then
       wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      bash miniconda.sh -b -p $HOME/miniconda
-      source "$HOME/miniconda/etc/profile.d/conda.sh"
-      hash -r
-      conda config --set always_yes yes --set changeps1 no
-      conda update -q conda
+      bash miniconda.sh -b -p $HOME/miniconda;
+      source "$HOME/miniconda/etc/profile.d/conda.sh";
+      hash -r;
+      conda config --set always_yes yes --set changeps1 no;
+      conda update -q conda;
       # Useful for debugging any issues with conda
-      conda info -a
+      conda info -a;
 
-      conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION xrootd
-      conda activate test-environment
+      conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION xrootd;
+      conda activate test-environment;
     fi
   - pip install -r .requirements_dev.txt
   - pip install .
