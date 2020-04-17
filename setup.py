@@ -23,7 +23,7 @@ repositories = []
 
 setup_requirements = ['pytest-runner', ]
 
-test_requirements = ['pytest', 'flake8', 'pytest-cov']
+test_requirements = ['pytest', 'flake8', 'pytest-cov', 'pyxrootd']
 
 setup(
     author="F.A.S.T",
