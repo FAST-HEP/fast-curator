@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed
 
+## [0.5.0] - 2020-01-27
+### Added
+- Support for handling files which can't be opened PR #36 [@seriksen](https://github.com/seriksen)
+
 ## [0.4.1] - 2019-10-06
 ### Changed
 - Save tree_name as single string if only one tree included, PR #30

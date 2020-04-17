@@ -16,6 +16,7 @@ __all__ = ["known_expanders", "prepare_file_list", "write_yaml",
 
 def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd",
                       prefix=None, no_empty_files=True, confirm_tree=True,
+                      ignore_inaccessible=False,
                       include_branches=False):
     """
     Expands all globs in the file lists and creates a dataframe similar to those from a DAS query
@@ -29,7 +30,8 @@ def prepare_file_list(files, dataset, eventtype, tree_name, expand_files="xrootd
     full_list, numentries, branches = expand_files.check_files(full_list, tree_name,
                                                                no_empty=no_empty_files,
                                                                list_branches=include_branches,
-                                                               confirm_tree=confirm_tree)
+                                                               confirm_tree=confirm_tree,
+                                                               ignore_inaccessible=ignore_inaccessible)
 
     data = {}
     if prefix:
@@ -60,12 +62,16 @@ def select_default(values):
     return most_common
 
 
-def prepare_contents(datasets):
+def prepare_contents(datasets, no_defaults_in_output=False):
     datasets = [vars(data) if isinstance(data, read.Dataset)
                 else data for data in datasets]
     for d in datasets:
         if "associates" in d:
             del d["associates"]
+
+    if no_defaults_in_output:
+        # do not group common settings together in default block
+        return dict(datasets=datasets)
 
     # build the default properties
     values = defaultdict(list)
@@ -99,12 +105,12 @@ def prepare_contents(datasets):
     return contents
 
 
-def write_yaml(dataset, out_file, append=True):
+def write_yaml(dataset, out_file, append=True, no_defaults_in_output=False):
     import yaml
     if os.path.exists(out_file) and append:
         datasets = read.from_yaml(out_file, expand_prefix=False)
         datasets.append(dataset)
-        contents = prepare_contents(datasets)
+        contents = prepare_contents(datasets, no_defaults_in_output=no_defaults_in_output)
     else:
         contents = {}
         contents["datasets"] = [dataset]
@@ -113,6 +119,10 @@ def write_yaml(dataset, out_file, append=True):
     class MyDumper(yaml.Dumper):
         def increase_indent(self, flow=False, indentless=False):
             return super(MyDumper, self).increase_indent(flow, False)
+
+        # disable aliases and anchors, see https://github.com/yaml/pyyaml/issues/103
+        def ignore_aliases(self, data):
+            return True
 
     yaml_contents = yaml.dump(
         contents, Dumper=MyDumper, default_flow_style=False)

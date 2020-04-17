@@ -10,7 +10,7 @@ def arg_parser_write():
     parser.add_argument("files", nargs='*')
     parser.add_argument("-d", "--dataset", required=True,
                         help="Which dataset to associate these files to")
-    parser.add_argument("-o", "--output", default="file_list.txt",
+    parser.add_argument("-o", "--output", default="file_list.yml",
                         type=str, help="Name of output file list")
     parser.add_argument("--mc", dest="eventtype", action="store_const", const="mc", default=None,
                         help="Specify if this dataset contains simulated data")
@@ -33,8 +33,15 @@ def arg_parser_write():
                         action="store_false", default=True,
                         help="Allow files that don't contain the named tree in"
                         )
+    parser.add_argument("--ignore-inaccessible", dest="ignore_inaccessible",
+                        default=False,
+                        help="Don't include files that can't be opened")
     parser.add_argument("-p", "--prefix", default=None,
                         help="Provide a common prefix to files, useful for supporting multiple sites")
+    parser.add_argument("--no-defaults-in-output", dest="no_defaults_in_output",
+                        action="store_true", default=False,
+                        help="Explicitly list all settings for each dataset in output"
+                             " file instead of grouping them in default block")
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 
     def split_meta(arg):
@@ -59,6 +66,7 @@ def main_write(args=None):
                                       expand_files=args.query_type,
                                       no_empty_files=args.no_empty_files,
                                       confirm_tree=args.confirm_tree,
+                                      ignore_inaccessible=args.ignore_inaccessible,
                                       prefix=args.prefix,
                                       eventtype=args.eventtype,
                                       tree_name=args.tree_name)
@@ -66,7 +74,7 @@ def main_write(args=None):
     for user_func in args.user:
         write.process_user_function(dataset, user_func)
 
-    write.write_yaml(dataset, args.output)
+    write.write_yaml(dataset, args.output, no_defaults_in_output=args.no_defaults_in_output)
 
 
 def arg_parser_check():
