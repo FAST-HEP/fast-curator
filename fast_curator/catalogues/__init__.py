@@ -9,7 +9,6 @@ class XrootdExpander():
     """
     @staticmethod
     def expand_file_list(files, prefix=None):
-        glob = 
         from XRootD.client.glob_funcs import glob
         return expand_file_list_generic(files, prefix, glob=glob)
 
