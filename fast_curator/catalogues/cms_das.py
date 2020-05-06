@@ -5,7 +5,6 @@ import subprocess
 import logging
 from .common import check_entries_uproot
 
-import pprint
 
 logger = logging.getLogger(__name__)
 _dasgoclient_prog = "dasgoclient"
@@ -19,7 +18,7 @@ def _check_proxy():
     except FileNotFoundError as e:
         if _proxyinfo_prog in str(e):
             msg = "%s not found. Needed to test voms proxy"
-            error = RuntimeError(msg % _proxyinfo_prog)
+            return RuntimeError(msg % _proxyinfo_prog)
     if "Proxy not found" in check_proxy.stderr:
         msg = "No valid VOMS proxy configured.  Please run `voms-proxy-init --voms cms`"
         return RuntimeError(msg)
@@ -27,7 +26,7 @@ def _check_proxy():
 
 def _check_help():
     try:
-        check_help = subprocess.run([_dasgoclient_prog, "-h"], capture_output=True)
+        subprocess.run([_dasgoclient_prog, "-h"])
     except FileNotFoundError as e:
         if _dasgoclient_prog in str(e):
             msg = "%s program not found, please set up necessary CMS environment"
