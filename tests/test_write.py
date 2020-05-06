@@ -110,4 +110,4 @@ def test_get_file_list_expander():
 
     with pytest.raises(RuntimeError) as e:
         fc_write.get_file_list_expander("gobbledy gook")
-    assert "Unknown file expander" in str(e)
+    assert "Unknown catalogue" in str(e)
