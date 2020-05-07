@@ -2,11 +2,9 @@
 Implements a curator-catalogue to CMS' DAS based on the dasgoclient command
 """
 import subprocess
-import logging
 from .common import check_entries_uproot
 
 
-logger = logging.getLogger(__name__)
 _dasgoclient_prog = "dasgoclient"
 _proxyinfo_prog = "voms-proxy-info"
 _default_prefix = "root://cms-xrd-global.cern.ch//"
@@ -26,7 +24,7 @@ def _check_proxy():
 
 def _check_help():
     try:
-        subprocess.run([_dasgoclient_prog, "-h"])
+        subprocess.run([_dasgoclient_prog, "-h"], capture_output=True)
     except FileNotFoundError as e:
         if _dasgoclient_prog in str(e):
             msg = "%s program not found, please set up necessary CMS environment"
@@ -53,7 +51,7 @@ def expand_file_list(datasets, prefix=None):
         query = "-query=file dataset={}".format(dataset)
         cmd = [_dasgoclient_prog, query, "-limit", "0", "-unique"]
         das_result = subprocess.run(cmd, capture_output=True, text=True)
-        files += [_default_prefix + f for f in das_result.stdout.split("\n") if f]
+        files += [prefix + f for f in das_result.stdout.split("\n") if f]
     return files
 
 
