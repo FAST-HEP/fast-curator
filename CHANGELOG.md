@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed
 
+## [0.7.0] - 2020-05-07
+### Added
+- Direct interface to query CMS' DAS file catalogue, PR #44
+
 ## [0.6.0] - 2020-04-17
 ### Changed
 - Use Xrootd's implementation of xrootd_glob not our own version PR #43 [@benkrikler](https://github.com/benkrikler)
