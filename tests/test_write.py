@@ -84,7 +84,7 @@ def test_prepare_file_list(dummy_file_dir, nfiles, nevents, empty, expand, prefi
     assert file_list["nevents"] == nevents
     assert len(file_list["branches"]) == 1
     assert len(file_list["branches"]["events"]) == 1
-    assert file_list["branches"]["events"][b"ev"] == 1
+    assert file_list["branches"]["events"]["ev"] == 1
     assert any("events_202" in f for f in file_list["files"])
 
 
