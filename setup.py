@@ -18,7 +18,7 @@ def get_version():
         exec(version_file.read(), _globals)
     return _globals["__version__"]
 
-requirements = ['pyyaml', 'six', 'uproot']
+requirements = ['pyyaml', 'six', 'uproot>=4.0.7', 'uproot3']
 repositories = []
 
 setup_requirements = ['pytest-runner', ]

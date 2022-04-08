@@ -8,6 +8,12 @@ if sys.version[0] > '2':
 else:
     from urlparse import urlparse
 
+try:
+    uproot_numentries = uproot.numentries  # uproot3
+except AttributeError:
+    import uproot3
+    uproot_numentries = uproot3.numentries
+
 
 class XrootdExpander():
     """
@@ -72,12 +78,12 @@ def check_entries_uproot(files, tree_names, no_empty, confirm_tree=True, list_br
         files = [f for f in files if os.access(f, os.R_OK)]
 
     if not no_empty:
-        n_entries = {tree: uproot.numentries(files, tree) for tree in tree_names}
+        n_entries = {tree: uproot_numentries(files, tree) for tree in tree_names}
     else:
         n_entries = {tree: 0 for tree in tree_names}
         missing_trees = defaultdict(list)
         for tree in tree_names:
-            totals = uproot.numentries(files, tree, total=False)
+            totals = uproot_numentries(files, tree, total=False)
             for name, entries in totals.items():
                 n_entries[tree] += entries
                 if no_empty and entries <= 0:

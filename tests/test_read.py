@@ -34,6 +34,21 @@ def yaml_config_2(yaml_config_1, tmpdir):
     return str(tmpfile)
 
 
+@pytest.fixture
+def yaml_config_3(tmpdir):
+    content = """
+    datasets:
+      - name: one
+        eventtype: mc
+        files: ["{prefix}one", "two"]
+        prefix: SOME_prefix/
+        nevents: !!int '77729'
+    """
+    tmpfile = tmpdir / "curator_yaml_config_3.yml"
+    tmpfile.write(content)
+    return str(tmpfile)
+
+
 def test_from_yaml_1(yaml_config_1):
     datasets = fc_read.from_yaml(yaml_config_1)
     assert len(datasets) == 1
@@ -42,6 +57,11 @@ def test_from_yaml_1(yaml_config_1):
 def test_from_yaml_2(yaml_config_2):
     datasets = fc_read.from_yaml(yaml_config_2)
     assert len(datasets) == 2
+
+
+def test_from_yaml_3(yaml_config_3):
+    datasets = fc_read.from_yaml(yaml_config_3)
+    assert len(datasets) == 1
 
 
 def test__from_string():
